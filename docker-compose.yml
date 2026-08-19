@@ -1,0 +1,1097 @@
+services:
+  qwen:
+    build: .
+    container_name: qwen3-0.6b
+    ports:
+      - "8080:8080"
+    environment:
+      PORT: "8080"
+      MODEL_FILE: qwen3-0.6b-q4_k_m.gguf
+      MODEL_URL: https://huggingface.co/Antigma/Qwen3-0.6B-GGUF/resolve/main/qwen3-0.6b-q4_k_m.gguf
+      N_CTX: ${N_CTX:-2048}
+      N_THREADS: ${N_THREADS:-4}
+      N_PREDICT: ${N_PREDICT:-256}
+      N_PARALLEL: ${N_PARALLEL:-1}
+      REASONING: ${REASONING:-auto}
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - models:/models
+    mem_limit: 2g
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    restart: unless-stopped
+
+  qwen35:
+    build: .
+    container_name: qwen3.5-0.8b
+    ports:
+      - "8081:8081"
+    environment:
+      PORT: "8081"
+      MODEL_FILE: Qwen3.5-0.8B-Q4_K_M.gguf
+      MODEL_URL: https://huggingface.co/unsloth/Qwen3.5-0.8B-GGUF/resolve/main/Qwen3.5-0.8B-Q4_K_M.gguf
+      N_CTX: ${N_CTX:-2048}
+      N_THREADS: ${N_THREADS:-4}
+      N_PREDICT: ${N_PREDICT:-256}
+      N_PARALLEL: ${N_PARALLEL:-1}
+      REASONING: "off"
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - models:/models
+    mem_limit: 2g
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    restart: unless-stopped
+
+  lfm25:
+    build: .
+    container_name: lfm2.5-2.6b
+    ports:
+      - "8082:8082"
+    environment:
+      PORT: "8082"
+      MODEL_FILE: LFM2.5-2.6B-Q4_0.gguf
+      MODEL_URL: https://huggingface.co/LiquidAI/LFM2.5-2.6B-GGUF/resolve/main/LFM2.5-2.6B-Q4_0.gguf
+      N_CTX: ${N_CTX:-2048}
+      N_THREADS: ${N_THREADS:-4}
+      N_PREDICT: ${N_PREDICT:-256}
+      N_PARALLEL: ${N_PARALLEL:-1}
+      REASONING: "off"
+      REASONING_BUDGET: "0"
+      REASONING_FORMAT: "deepseek"
+      CHAT_TEMPLATE_FILE: /templates/lfm25-no-think.jinja
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - models:/models
+      - ./templates:/templates:ro
+    # Q4_0 weights alone are ~1.59GB — 2g is too tight
+    mem_limit: 3g
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8082/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 120s
+    restart: unless-stopped
+
+  qwen35_2b:
+    build: .
+    container_name: qwen3.5-2b
+    ports:
+      - "8083:8083"
+    environment:
+      PORT: "8083"
+      MODEL_FILE: Qwen3.5-2B-Q4_K_M.gguf
+      MODEL_URL: https://huggingface.co/unsloth/Qwen3.5-2B-GGUF/resolve/main/Qwen3.5-2B-Q4_K_M.gguf
+      N_CTX: ${N_CTX:-2048}
+      N_THREADS: ${N_THREADS:-4}
+      N_PREDICT: ${N_PREDICT:-256}
+      N_PARALLEL: ${N_PARALLEL:-1}
+      N_GPU_LAYERS: "0"
+      REASONING: "off"
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - models:/models
+    # Q4_K_M weights ~1.28GB
+    mem_limit: 3g
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8083/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 120s
+    restart: unless-stopped
+
+  qwen35_2b_gpu:
+    build:
+      context: .
+      dockerfile: Dockerfile.cuda
+    container_name: qwen3.5-2b-gpu
+    ports:
+      - "8100:8100"
+    environment:
+      PORT: "8100"
+      MODEL_FILE: Qwen3.5-2B-Q4_K_M.gguf
+      MODEL_URL: https://huggingface.co/unsloth/Qwen3.5-2B-GGUF/resolve/main/Qwen3.5-2B-Q4_K_M.gguf
+      N_CTX: ${N_CTX:-2048}
+      N_THREADS: ${N_THREADS:-4}
+      N_PREDICT: ${N_PREDICT:-256}
+      N_PARALLEL: ${N_PARALLEL:-1}
+      N_GPU_LAYERS: ${N_GPU_LAYERS:-99}
+      REASONING: "off"
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - models:/models
+    gpus: all
+    profiles: ["gpu"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8100/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 120s
+    restart: unless-stopped
+
+  qwen35_4b_gpu:
+    build:
+      context: .
+      dockerfile: Dockerfile.cuda
+    container_name: qwen3.5-4b-gpu
+    ports:
+      - "8102:8102"
+    environment:
+      PORT: "8102"
+      MODEL_FILE: Qwen3.5-4B-Q4_K_M.gguf
+      MODEL_URL: https://huggingface.co/unsloth/Qwen3.5-4B-GGUF/resolve/main/Qwen3.5-4B-Q4_K_M.gguf
+      N_CTX: ${N_CTX:-2048}
+      N_THREADS: ${N_THREADS:-4}
+      N_PREDICT: ${N_PREDICT:-256}
+      N_PARALLEL: ${N_PARALLEL:-1}
+      N_GPU_LAYERS: ${N_GPU_LAYERS:-99}
+      REASONING: "off"
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - models:/models
+    gpus: all
+    profiles: ["gpu"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8102/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 180s
+    restart: unless-stopped
+
+  # Identical to qwen35_4b_gpu (:8102) except --no-mmproj (vLLM --language-model-only).
+  qwen35_4b_nommproj_gpu:
+    build:
+      context: .
+      dockerfile: Dockerfile.cuda
+    container_name: qwen3.5-4b-nommproj-gpu
+    ports:
+      - "8111:8111"
+    environment:
+      PORT: "8111"
+      MODEL_FILE: Qwen3.5-4B-Q4_K_M.gguf
+      MODEL_URL: https://huggingface.co/unsloth/Qwen3.5-4B-GGUF/resolve/main/Qwen3.5-4B-Q4_K_M.gguf
+      NO_MMPROJ: "1"
+      N_CTX: ${N_CTX:-2048}
+      N_THREADS: ${N_THREADS:-4}
+      N_PREDICT: ${N_PREDICT:-256}
+      N_PARALLEL: ${N_PARALLEL:-1}
+      N_GPU_LAYERS: ${N_GPU_LAYERS:-99}
+      REASONING: "off"
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - models:/models
+    gpus: all
+    profiles: ["gpu"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8111/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 180s
+    restart: unless-stopped
+
+  # Same 4B family as :8102, but Unsloth MTP GGUF (heads in-file, no 0.8B).
+  # vLLM: --speculative-config method=qwen3_next_mtp num_speculative_tokens=2
+  #        --reasoning-parser qwen3 --language-model-only --tensor-parallel-size 1
+  qwen35_4b_spec_gpu:
+    build:
+      context: .
+      dockerfile: Dockerfile.cuda
+    container_name: qwen3.5-4b-spec-gpu
+    ports:
+      - "8110:8110"
+    environment:
+      PORT: "8110"
+      MODEL_FILE: Qwen3.5-4B-MTP-Q4_K_M.gguf
+      MODEL_URL: https://huggingface.co/unsloth/Qwen3.5-4B-MTP-GGUF/resolve/main/Qwen3.5-4B-Q4_K_M.gguf
+      SPEC_TYPE: draft-mtp
+      SPEC_DRAFT_N_MAX: "2"
+      FLASH_ATTN: "on"
+      NO_MMPROJ: "1"
+      N_CTX: ${N_CTX:-2048}
+      N_THREADS: ${N_THREADS:-4}
+      N_PREDICT: ${N_PREDICT:-256}
+      N_PARALLEL: ${N_PARALLEL:-1}
+      N_GPU_LAYERS: ${N_GPU_LAYERS:-99}
+      REASONING: "off"
+      REASONING_BUDGET: "0"
+      REASONING_FORMAT: "deepseek"
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - models:/models
+    gpus: all
+    profiles: ["gpu"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8110/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 8
+      start_period: 180s
+    restart: unless-stopped
+
+  # Same MTP GGUF as :8110 plus ngram-mod (Reddit 665% trick: hash reuse on
+  # iterative code rewrites, no extra draft file). Stacks with MTP.
+  qwen35_4b_ngram_gpu:
+    build:
+      context: .
+      dockerfile: Dockerfile.cuda
+    container_name: qwen3.5-4b-ngram-gpu
+    ports:
+      - "8112:8112"
+    environment:
+      PORT: "8112"
+      MODEL_FILE: Qwen3.5-4B-MTP-Q4_K_M.gguf
+      MODEL_URL: https://huggingface.co/unsloth/Qwen3.5-4B-MTP-GGUF/resolve/main/Qwen3.5-4B-Q4_K_M.gguf
+      SPEC_TYPE: draft-mtp,ngram-mod
+      SPEC_DRAFT_N_MAX: "2"
+      SPEC_NGRAM_MOD_N_MATCH: "24"
+      SPEC_NGRAM_MOD_N_MIN: "12"
+      SPEC_NGRAM_MOD_N_MAX: "48"
+      FLASH_ATTN: "on"
+      NO_MMPROJ: "1"
+      N_CTX: ${N_CTX:-2048}
+      N_THREADS: ${N_THREADS:-4}
+      N_PREDICT: ${N_PREDICT:-256}
+      N_PARALLEL: ${N_PARALLEL:-1}
+      N_GPU_LAYERS: ${N_GPU_LAYERS:-99}
+      REASONING: "off"
+      REASONING_BUDGET: "0"
+      REASONING_FORMAT: "deepseek"
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - models:/models
+    gpus: all
+    profiles: ["gpu"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8112/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 8
+      start_period: 180s
+    restart: unless-stopped
+
+  # Same as :8112 (MTP + ngram-mod) but N_PARALLEL=4 for concurrency testing.
+  qwen35_4b_ngram_np4_gpu:
+    build:
+      context: .
+      dockerfile: Dockerfile.cuda
+    container_name: qwen3.5-4b-ngram-np4-gpu
+    ports:
+      - "8115:8115"
+    environment:
+      PORT: "8115"
+      MODEL_FILE: Qwen3.5-4B-MTP-Q4_K_M.gguf
+      MODEL_URL: https://huggingface.co/unsloth/Qwen3.5-4B-MTP-GGUF/resolve/main/Qwen3.5-4B-Q4_K_M.gguf
+      SPEC_TYPE: draft-mtp,ngram-mod
+      SPEC_DRAFT_N_MAX: "2"
+      SPEC_NGRAM_MOD_N_MATCH: "24"
+      SPEC_NGRAM_MOD_N_MIN: "12"
+      SPEC_NGRAM_MOD_N_MAX: "48"
+      FLASH_ATTN: "on"
+      NO_MMPROJ: "1"
+      N_CTX: ${N_CTX:-2048}
+      N_THREADS: ${N_THREADS:-4}
+      N_PREDICT: ${N_PREDICT:-256}
+      N_PARALLEL: "4"
+      N_GPU_LAYERS: ${N_GPU_LAYERS:-99}
+      REASONING: "off"
+      REASONING_BUDGET: "0"
+      REASONING_FORMAT: "deepseek"
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - models:/models
+    gpus: all
+    profiles: ["gpu"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8115/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 8
+      start_period: 180s
+    restart: unless-stopped
+
+  # Ministral 3B GPU — same GGUF as CPU :8084
+  ministral3_gpu:
+    build:
+      context: .
+      dockerfile: Dockerfile.cuda
+    container_name: ministral-3-3b-gpu
+    ports:
+      - "8114:8114"
+    environment:
+      PORT: "8114"
+      MODEL_FILE: Ministral-3-3B-Instruct-2512-Q4_K_M.gguf
+      MODEL_URL: https://huggingface.co/mistralai/Ministral-3-3B-Instruct-2512-GGUF/resolve/main/Ministral-3-3B-Instruct-2512-Q4_K_M.gguf
+      N_CTX: ${N_CTX:-2048}
+      N_THREADS: ${N_THREADS:-4}
+      N_PREDICT: ${N_PREDICT:-256}
+      N_PARALLEL: ${N_PARALLEL:-1}
+      N_GPU_LAYERS: ${N_GPU_LAYERS:-99}
+      REASONING: "off"
+      REASONING_BUDGET: "0"
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - models:/models
+    gpus: all
+    profiles: ["gpu"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8114/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 180s
+    restart: unless-stopped
+
+  # IBM Granite 4.1 8B — Apache 2.0, tool-calling, FIM, multilingual.
+  granite41_8b_gpu:
+    build:
+      context: .
+      dockerfile: Dockerfile.cuda
+    container_name: granite-4.1-8b-gpu
+    ports:
+      - "8113:8113"
+    environment:
+      PORT: "8113"
+      MODEL_FILE: granite-4.1-8b-Q4_K_M.gguf
+      MODEL_URL: https://huggingface.co/ibm-granite/granite-4.1-8b-GGUF/resolve/main/granite-4.1-8b-Q4_K_M.gguf
+      N_CTX: ${N_CTX:-2048}
+      N_THREADS: ${N_THREADS:-4}
+      N_PREDICT: ${N_PREDICT:-256}
+      N_PARALLEL: ${N_PARALLEL:-1}
+      N_GPU_LAYERS: ${N_GPU_LAYERS:-99}
+      REASONING: "off"
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - models:/models
+    gpus: all
+    profiles: ["gpu"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8113/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 300s
+    restart: unless-stopped
+
+  # Same Unsloth 4B target as qwen35_4b_gpu (:8102) plus z-lab DFlash drafter
+  # (AtomicChat GGUF). Does not replace :8102. Exclusive GPU on a 12 GB card.
+  qwen35_4b_dflash_gpu:
+    build:
+      context: .
+      dockerfile: Dockerfile.cuda
+    container_name: qwen3.5-4b-dflash-gpu
+    ports:
+      - "8109:8109"
+    environment:
+      PORT: "8109"
+      MODEL_FILE: Qwen3.5-4B-Q4_K_M.gguf
+      MODEL_URL: https://huggingface.co/unsloth/Qwen3.5-4B-GGUF/resolve/main/Qwen3.5-4B-Q4_K_M.gguf
+      DRAFT_FILE: Qwen3.5-4B-DFlash.Q8_0.gguf
+      DRAFT_URL: https://huggingface.co/AtomicChat/Qwen3.5-4B-DFlash-GGUF/resolve/main/Qwen3.5-4B-DFlash.Q8_0.gguf
+      SPEC_TYPE: draft-dflash
+      SPEC_DRAFT_N_MAX: "15"
+      N_GPU_LAYERS_DRAFT: "99"
+      FLASH_ATTN: "on"
+      N_CTX: "32768"
+      N_THREADS: ${N_THREADS:-4}
+      N_PREDICT: "1536"
+      N_PARALLEL: "1"
+      N_GPU_LAYERS: ${N_GPU_LAYERS:-99}
+      REASONING: "off"
+      REASONING_BUDGET: "0"
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - models:/models
+    gpus: all
+    profiles: ["gpu"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8109/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 8
+      start_period: 300s
+    restart: unless-stopped
+
+  qwen35_9b_gpu:
+    build:
+      context: .
+      dockerfile: Dockerfile.cuda
+    container_name: qwen3.5-9b-gpu
+    ports:
+      - "8103:8103"
+    environment:
+      PORT: "8103"
+      MODEL_FILE: Qwen3.5-9B-Q4_K_M.gguf
+      MODEL_URL: https://huggingface.co/unsloth/Qwen3.5-9B-GGUF/resolve/main/Qwen3.5-9B-Q4_K_M.gguf
+      N_CTX: ${N_CTX:-2048}
+      N_THREADS: ${N_THREADS:-4}
+      N_PREDICT: ${N_PREDICT:-256}
+      N_PARALLEL: ${N_PARALLEL:-1}
+      N_GPU_LAYERS: ${N_GPU_LAYERS:-99}
+      REASONING: "off"
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - models:/models
+    gpus: all
+    profiles: ["gpu"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8103/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 8
+      start_period: 300s
+    restart: unless-stopped
+
+  phi4_mini_gpu:
+    build:
+      context: .
+      dockerfile: Dockerfile.cuda
+    container_name: phi4-mini-gpu
+    ports:
+      - "8107:8107"
+    environment:
+      PORT: "8107"
+      MODEL_FILE: microsoft_Phi-4-mini-reasoning-Q4_K_M.gguf
+      MODEL_URL: https://huggingface.co/bartowski/microsoft_Phi-4-mini-reasoning-GGUF/resolve/main/microsoft_Phi-4-mini-reasoning-Q4_K_M.gguf
+      N_CTX: "8192"
+      N_THREADS: ${N_THREADS:-4}
+      N_PREDICT: "1536"
+      N_PARALLEL: ${N_PARALLEL:-1}
+      N_GPU_LAYERS: ${N_GPU_LAYERS:-99}
+      REASONING: "off"
+      REASONING_BUDGET: "0"
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - models:/models
+    gpus: all
+    profiles: ["gpu"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8107/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 8
+      start_period: 300s
+    restart: unless-stopped
+
+  ministral3:
+    build: .
+    container_name: ministral-3-3b
+    ports:
+      - "8084:8084"
+    environment:
+      PORT: "8084"
+      MODEL_FILE: Ministral-3-3B-Instruct-2512-Q4_K_M.gguf
+      MODEL_URL: https://huggingface.co/mistralai/Ministral-3-3B-Instruct-2512-GGUF/resolve/main/Ministral-3-3B-Instruct-2512-Q4_K_M.gguf
+      N_CTX: ${N_CTX:-2048}
+      N_THREADS: ${N_THREADS:-4}
+      N_PREDICT: ${N_PREDICT:-256}
+      N_PARALLEL: ${N_PARALLEL:-1}
+      REASONING: "off"
+      REASONING_BUDGET: "0"
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - models:/models
+    # Q4_K_M weights ~2.15GB (text only; no mmproj)
+    mem_limit: 4g
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8084/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 180s
+    restart: unless-stopped
+
+  minicpm5:
+    build: .
+    container_name: minicpm5-1b
+    ports:
+      - "8085:8085"
+    environment:
+      PORT: "8085"
+      MODEL_FILE: MiniCPM5-1B-Q4_K_M.gguf
+      MODEL_URL: https://huggingface.co/openbmb/MiniCPM5-1B-GGUF/resolve/main/MiniCPM5-1B-Q4_K_M.gguf
+      N_CTX: ${N_CTX:-2048}
+      N_THREADS: ${N_THREADS:-4}
+      N_PREDICT: ${N_PREDICT:-256}
+      N_PARALLEL: ${N_PARALLEL:-1}
+      # Hybrid think/no-think via chat template; force off for benchmarks
+      REASONING: "off"
+      REASONING_BUDGET: "0"
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - models:/models
+    # Q4_K_M weights ~657MB; runtime ~1.3GB
+    mem_limit: 2g
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8085/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 120s
+    restart: unless-stopped
+
+  gemma3:
+    build: .
+    container_name: gemma3-1b
+    ports:
+      - "8086:8086"
+    environment:
+      PORT: "8086"
+      MODEL_FILE: google_gemma-3-1b-it-Q4_K_M.gguf
+      MODEL_URL: https://huggingface.co/bartowski/google_gemma-3-1b-it-GGUF/resolve/main/google_gemma-3-1b-it-Q4_K_M.gguf
+      N_CTX: ${N_CTX:-2048}
+      N_THREADS: ${N_THREADS:-4}
+      N_PREDICT: ${N_PREDICT:-256}
+      N_PARALLEL: ${N_PARALLEL:-1}
+      REASONING: "off"
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - models:/models
+    # Q4_K_M weights ~806MB
+    mem_limit: 2g
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8086/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 120s
+    restart: unless-stopped
+
+  llama32:
+    build: .
+    container_name: llama3.2-1b
+    ports:
+      - "8087:8087"
+    environment:
+      PORT: "8087"
+      MODEL_FILE: Llama-3.2-1B-Instruct-Q4_K_M.gguf
+      MODEL_URL: https://huggingface.co/bartowski/Llama-3.2-1B-Instruct-GGUF/resolve/main/Llama-3.2-1B-Instruct-Q4_K_M.gguf
+      N_CTX: ${N_CTX:-2048}
+      N_THREADS: ${N_THREADS:-4}
+      N_PREDICT: ${N_PREDICT:-256}
+      N_PARALLEL: ${N_PARALLEL:-1}
+      REASONING: "off"
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - models:/models
+    # Q4_K_M weights ~808MB
+    mem_limit: 2g
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8087/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 120s
+    restart: unless-stopped
+
+  qwen17:
+    build: .
+    container_name: qwen3-1.7b
+    ports:
+      - "8088:8088"
+    environment:
+      PORT: "8088"
+      MODEL_FILE: Qwen3-1.7B-Q4_K_M.gguf
+      MODEL_URL: https://huggingface.co/unsloth/Qwen3-1.7B-GGUF/resolve/main/Qwen3-1.7B-Q4_K_M.gguf
+      N_CTX: ${N_CTX:-2048}
+      N_THREADS: ${N_THREADS:-4}
+      N_PREDICT: ${N_PREDICT:-256}
+      N_PARALLEL: ${N_PARALLEL:-1}
+      # Qwen3 hybrid think — force off for benchmarks
+      REASONING: "off"
+      REASONING_BUDGET: "0"
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - models:/models
+    # Q4_K_M weights ~1.1–1.2GB
+    mem_limit: 3g
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8088/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 180s
+    restart: unless-stopped
+
+  openelm:
+    build: .
+    container_name: openelm-1.1b
+    ports:
+      - "8089:8089"
+    environment:
+      PORT: "8089"
+      MODEL_FILE: OpenELM-1_1B-Instruct.Q4_K_M.gguf
+      MODEL_URL: https://huggingface.co/mradermacher/OpenELM-1_1B-Instruct-GGUF/resolve/main/OpenELM-1_1B-Instruct.Q4_K_M.gguf
+      N_CTX: ${N_CTX:-2048}
+      N_THREADS: ${N_THREADS:-4}
+      N_PREDICT: ${N_PREDICT:-256}
+      N_PARALLEL: ${N_PARALLEL:-1}
+      REASONING: "off"
+      # Prefer Alpaca-style instruct format; GGUF ChatML is wrong
+      CHAT_TEMPLATE_FILE: /templates/openelm-instruct.jinja
+      # Rarely emits EOS — stops after answer before "### Explanation" / next turn
+      REVERSE_PROMPTS: "### Explanation:,### Instruction:"
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - models:/models
+      - ./templates:/templates:ro
+    # Q4_K_M weights ~0.7–0.8GB
+    mem_limit: 2g
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8089/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 120s
+    restart: unless-stopped
+
+  bonsai17:
+    build: .
+    container_name: bonsai-1.7b
+    ports:
+      - "8091:8091"
+    environment:
+      PORT: "8091"
+      MODEL_FILE: Bonsai-1.7B-Q1_0.gguf
+      MODEL_URL: https://huggingface.co/prism-ml/Bonsai-1.7B-gguf/resolve/main/Bonsai-1.7B-Q1_0.gguf
+      N_CTX: ${N_CTX:-2048}
+      N_THREADS: ${N_THREADS:-4}
+      N_PREDICT: ${N_PREDICT:-256}
+      N_PARALLEL: ${N_PARALLEL:-1}
+      # Qwen3-1.7B derived; keep thinking off for benchmarks
+      REASONING: "off"
+      REASONING_BUDGET: "0"
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - models:/models
+    # Q1_0 ~248MB on disk; runtime well under 2g
+    mem_limit: 2g
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8091/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 120s
+    restart: unless-stopped
+
+  bonsai4:
+    build: .
+    container_name: bonsai-4b
+    ports:
+      - "8092:8092"
+    environment:
+      PORT: "8092"
+      MODEL_FILE: Bonsai-4B-Q1_0.gguf
+      MODEL_URL: https://huggingface.co/prism-ml/Bonsai-4B-gguf/resolve/main/Bonsai-4B-Q1_0.gguf
+      N_CTX: ${N_CTX:-2048}
+      N_THREADS: ${N_THREADS:-4}
+      N_PREDICT: ${N_PREDICT:-256}
+      N_PARALLEL: ${N_PARALLEL:-1}
+      REASONING: "off"
+      REASONING_BUDGET: "0"
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - models:/models
+    # Q1_0 ~572MB
+    mem_limit: 2g
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8092/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 180s
+    restart: unless-stopped
+
+  bonsai8:
+    build: .
+    container_name: bonsai-8b
+    ports:
+      - "8093:8093"
+    environment:
+      PORT: "8093"
+      MODEL_FILE: Bonsai-8B-Q1_0.gguf
+      MODEL_URL: https://huggingface.co/prism-ml/Bonsai-8B-gguf/resolve/main/Bonsai-8B-Q1_0.gguf
+      N_CTX: ${N_CTX:-2048}
+      N_THREADS: ${N_THREADS:-4}
+      N_PREDICT: ${N_PREDICT:-256}
+      N_PARALLEL: ${N_PARALLEL:-1}
+      N_GPU_LAYERS: "0"
+      REASONING: "off"
+      REASONING_BUDGET: "0"
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - models:/models
+    # Q1_0 ~1.16GB
+    mem_limit: 3g
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8093/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 180s
+    restart: unless-stopped
+
+  bonsai8_gpu:
+    build:
+      context: .
+      dockerfile: Dockerfile.cuda
+    container_name: bonsai-8b-gpu
+    ports:
+      - "8099:8099"
+    environment:
+      PORT: "8099"
+      MODEL_FILE: Bonsai-8B-Q1_0.gguf
+      MODEL_URL: https://huggingface.co/prism-ml/Bonsai-8B-gguf/resolve/main/Bonsai-8B-Q1_0.gguf
+      N_CTX: ${N_CTX:-2048}
+      N_THREADS: ${N_THREADS:-4}
+      N_PREDICT: ${N_PREDICT:-256}
+      N_PARALLEL: ${N_PARALLEL:-1}
+      N_GPU_LAYERS: ${N_GPU_LAYERS:-99}
+      REASONING: "off"
+      REASONING_BUDGET: "0"
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - models:/models
+    gpus: all
+    profiles: ["gpu"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8099/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 180s
+    restart: unless-stopped
+
+  ternary_bonsai8_gpu:
+    build:
+      context: .
+      dockerfile: Dockerfile.prism-cuda
+    container_name: ternary-bonsai-8b-gpu
+    ports:
+      - "8104:8104"
+    environment:
+      PORT: "8104"
+      MODEL_FILE: Ternary-Bonsai-8B-Q2_0.gguf
+      MODEL_URL: https://huggingface.co/prism-ml/Ternary-Bonsai-8B-gguf/resolve/main/Ternary-Bonsai-8B-Q2_0.gguf
+      N_CTX: "8192"
+      N_THREADS: ${N_THREADS:-4}
+      N_PREDICT: "1536"
+      N_PARALLEL: ${N_PARALLEL:-1}
+      N_GPU_LAYERS: ${N_GPU_LAYERS:-99}
+      REASONING: "off"
+      REASONING_BUDGET: "0"
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - models:/models
+    gpus: all
+    profiles: ["gpu"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8104/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 8
+      start_period: 300s
+    restart: unless-stopped
+
+  ternary_bonsai4_gpu:
+    build:
+      context: .
+      dockerfile: Dockerfile.prism-cuda
+    container_name: ternary-bonsai-4b-gpu
+    ports:
+      - "8105:8105"
+    environment:
+      PORT: "8105"
+      MODEL_FILE: Ternary-Bonsai-4B-Q2_0.gguf
+      MODEL_URL: https://huggingface.co/prism-ml/Ternary-Bonsai-4B-gguf/resolve/main/Ternary-Bonsai-4B-Q2_0.gguf
+      N_CTX: "8192"
+      N_THREADS: ${N_THREADS:-4}
+      N_PREDICT: "1536"
+      N_PARALLEL: ${N_PARALLEL:-1}
+      N_GPU_LAYERS: ${N_GPU_LAYERS:-99}
+      REASONING: "off"
+      REASONING_BUDGET: "0"
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - models:/models
+    gpus: all
+    profiles: ["gpu"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8105/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 8
+      start_period: 240s
+    restart: unless-stopped
+
+  ternary_bonsai17_gpu:
+    build:
+      context: .
+      dockerfile: Dockerfile.prism-cuda
+    container_name: ternary-bonsai-1.7b-gpu
+    ports:
+      - "8106:8106"
+    environment:
+      PORT: "8106"
+      MODEL_FILE: Ternary-Bonsai-1.7B-Q2_0.gguf
+      MODEL_URL: https://huggingface.co/prism-ml/Ternary-Bonsai-1.7B-gguf/resolve/main/Ternary-Bonsai-1.7B-Q2_0.gguf
+      N_CTX: "8192"
+      N_THREADS: ${N_THREADS:-4}
+      N_PREDICT: "1536"
+      N_PARALLEL: ${N_PARALLEL:-1}
+      N_GPU_LAYERS: ${N_GPU_LAYERS:-99}
+      REASONING: "off"
+      REASONING_BUDGET: "0"
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - models:/models
+    gpus: all
+    profiles: ["gpu"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8106/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 8
+      start_period: 180s
+    restart: unless-stopped
+
+  tinyllama:
+    build: .
+    container_name: tinyllama-1.1b
+    ports:
+      - "8094:8094"
+    environment:
+      PORT: "8094"
+      MODEL_FILE: tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf
+      MODEL_URL: https://huggingface.co/TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF/resolve/main/tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf
+      N_CTX: ${N_CTX:-2048}
+      N_THREADS: ${N_THREADS:-4}
+      N_PREDICT: ${N_PREDICT:-256}
+      N_PARALLEL: ${N_PARALLEL:-1}
+      REASONING: "off"
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - models:/models
+    # Q4_K_M ~669MB
+    mem_limit: 2g
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8094/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 120s
+    restart: unless-stopped
+
+  go_emotions:
+    build: ./go-emotions
+    container_name: go-emotions
+    ports:
+      - "8095:8095"
+    environment:
+      PORT: "8095"
+      MODEL_ID: SamLowe/roberta-base-go_emotions-onnx
+      MODEL_FILE: onnx/model_quantized.onnx
+      HF_HOME: /cache/huggingface
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - go-emotions-cache:/cache/huggingface
+    # ONNX INT8 ~125MB weights
+    mem_limit: 1g
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8095/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 180s
+    restart: unless-stopped
+
+  bert_emotion:
+    build: ./bert-emotion
+    container_name: bert-emotion
+    ports:
+      - "8096:8096"
+    environment:
+      PORT: "8096"
+      MODEL_ID: boltuix/bert-emotion
+      HF_HOME: /cache/huggingface
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - bert-emotion-cache:/cache/huggingface
+    # ~6M params / ~20MB weights; torch CPU runtime headroom
+    mem_limit: 1g
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8096/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 180s
+    restart: unless-stopped
+
+  emobank_vad:
+    build: ./emobank-vad
+    container_name: emobank-vad
+    ports:
+      - "8097:8097"
+    environment:
+      PORT: "8097"
+      MODEL_ID: BenRongey/deberta-v3-base-emobank-vad
+      BASE_MODEL_ID: microsoft/deberta-v3-base
+      HF_HOME: /cache/huggingface
+      MAX_LENGTH: "512"
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - emobank-vad-cache:/cache/huggingface
+    # DeBERTa-v3-base + LoRA adapter
+    mem_limit: 3g
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8097/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 8
+      start_period: 600s
+    restart: unless-stopped
+
+  vad_bert:
+    build: ./vad-bert
+    container_name: vad-bert
+    ports:
+      - "8098:8098"
+    environment:
+      PORT: "8098"
+      MODEL_ID: RobroKools/vad-bert
+      HF_HOME: /cache/huggingface
+      MAX_LENGTH: "512"
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - vad-bert-cache:/cache/huggingface
+    # bert-base-uncased fine-tune ~420MB
+    mem_limit: 2g
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8098/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 300s
+    restart: unless-stopped
+
+  bonsai27:
+    build: .
+    container_name: bonsai-27b
+    ports:
+      - "8090:8090"
+    environment:
+      PORT: "8090"
+      MODEL_FILE: Bonsai-27B-Q1_0.gguf
+      MODEL_URL: https://huggingface.co/prism-ml/Bonsai-27B-gguf/resolve/main/Bonsai-27B-Q1_0.gguf
+      N_CTX: ${N_CTX:-2048}
+      N_THREADS: ${N_THREADS:-4}
+      N_PREDICT: ${N_PREDICT:-256}
+      N_PARALLEL: ${N_PARALLEL:-1}
+      N_GPU_LAYERS: "0"
+      # Qwen3.6-derived; keep thinking off for benchmarks
+      REASONING: "off"
+      REASONING_BUDGET: "0"
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - models:/models
+    # Q1_0 text weights ~3.5–3.9GB (no mmproj); leave headroom for KV
+    mem_limit: 8g
+    profiles: ["bonsai27"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8090/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 600s
+    restart: unless-stopped
+
+  bonsai27_gpu:
+    build:
+      context: .
+      dockerfile: Dockerfile.cuda
+    container_name: bonsai-27b-gpu
+    ports:
+      - "8101:8101"
+    environment:
+      PORT: "8101"
+      MODEL_FILE: Bonsai-27B-Q1_0.gguf
+      MODEL_URL: https://huggingface.co/prism-ml/Bonsai-27B-gguf/resolve/main/Bonsai-27B-Q1_0.gguf
+      N_CTX: ${N_CTX:-2048}
+      N_THREADS: ${N_THREADS:-4}
+      N_PREDICT: "1536"
+      N_PARALLEL: ${N_PARALLEL:-1}
+      N_GPU_LAYERS: ${N_GPU_LAYERS:-99}
+      REASONING: "off"
+      REASONING_BUDGET: "0"
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - models:/models
+    gpus: all
+    profiles: ["gpu"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8101/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 8
+      start_period: 600s
+    restart: unless-stopped
+
+  bonsai27_spec_gpu:
+    build:
+      context: .
+      dockerfile: Dockerfile.prism-cuda
+    container_name: bonsai-27b-spec-gpu
+    ports:
+      - "8108:8108"
+    environment:
+      PORT: "8108"
+      MODEL_FILE: Bonsai-27B-Q1_0.gguf
+      MODEL_URL: https://huggingface.co/prism-ml/Bonsai-27B-gguf/resolve/main/Bonsai-27B-Q1_0.gguf
+      DRAFT_FILE: Bonsai-27B-dspark-Q4_1.gguf
+      DRAFT_URL: https://huggingface.co/prism-ml/Bonsai-27B-gguf/resolve/main/Bonsai-27B-dspark-Q4_1.gguf
+      SPEC_TYPE: draft-dspark
+      SPEC_DRAFT_N_MAX: "4"
+      N_GPU_LAYERS_DRAFT: "99"
+      FLASH_ATTN: "on"
+      N_CTX: "2048"
+      N_THREADS: ${N_THREADS:-4}
+      N_PREDICT: "1536"
+      N_PARALLEL: "1"
+      # DSpark needs context checkpoints. Prism already defaults cms to 256;
+      # mid-prompt snapshots still only land at the last user-message boundary.
+      CHECKPOINT_MIN_STEP: "256"
+      CTX_CHECKPOINTS: "8"
+      N_GPU_LAYERS: ${N_GPU_LAYERS:-99}
+      REASONING: "off"
+      REASONING_BUDGET: "0"
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - models:/models
+    gpus: all
+    profiles: ["gpu"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8108/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 8
+      start_period: 300s
+    restart: unless-stopped
+
+volumes:
+  models:
+  go-emotions-cache:
+  bert-emotion-cache:
+  emobank-vad-cache:
+  vad-bert-cache:

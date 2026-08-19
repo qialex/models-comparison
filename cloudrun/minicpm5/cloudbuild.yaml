@@ -1,0 +1,16 @@
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - -f
+      - cloudrun/minicpm5/Dockerfile
+      - -t
+      - ${_IMAGE}
+      - .
+images:
+  - ${_IMAGE}
+substitutions:
+  _IMAGE: europe-west1-docker.pkg.dev/${PROJECT_ID}/llm/minicpm5-1b:cpu
+options:
+  machineType: E2_HIGHCPU_8
+  diskSizeGb: 50

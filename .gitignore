@@ -1,0 +1,22 @@
+# Secrets / local env
+.env
+
+# IDE (machine-specific)
+.vscode/
+
+# Ad-hoc curl / smoke-test payloads (root)
+/*.json
+
+# Local RAM / benchmark scratch
+ram-monitor.log
+ram-peaks.json
+ram-peaks.json.txt
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# OS
+.DS_Store
+Thumbs.db

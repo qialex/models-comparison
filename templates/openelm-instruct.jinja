@@ -1,0 +1,12 @@
+{%- for message in messages -%}
+{%- if message['role'] == 'system' -%}
+{{- message['content'] + '\n\n' -}}
+{%- elif message['role'] == 'user' -%}
+{{- '### Instruction:\n' + message['content'] + '\n\n' -}}
+{%- elif message['role'] == 'assistant' -%}
+{{- '### Response:\n' + message['content'] + eos_token + '\n\n' -}}
+{%- endif -%}
+{%- endfor -%}
+{%- if add_generation_prompt -%}
+{{- '### Response:\n' -}}
+{%- endif -%}

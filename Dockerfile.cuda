@@ -1,0 +1,18 @@
+FROM ghcr.io/ggml-org/llama.cpp:server-cuda
+
+USER root
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+ENV MODEL_DIR=/models \
+    N_CTX=2048 \
+    N_THREADS=4 \
+    N_PREDICT=256 \
+    N_PARALLEL=1 \
+    N_GPU_LAYERS=99 \
+    HOST=0.0.0.0
+
+VOLUME ["/models"]
+EXPOSE 8099 8100 8101 8102 8103 8107 8109 8110 8111 8112 8113 8114 8115
+
+ENTRYPOINT ["/entrypoint.sh"]
