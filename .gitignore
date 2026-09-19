@@ -12,6 +12,21 @@ ram-monitor.log
 ram-peaks.json
 ram-peaks.json.txt
 
+# Local HF model caches (large) — scripts live in scripts/vast/; only outputs stay here
+cache/
+
+# Vast hunt runtime logs if ever written beside scripts
+scripts/vast/**/*.log
+scripts/vast/**/*.json
+!scripts/vast/**/README.md
+
+# Image / model comparison outputs (keep prompts tracked)
+results/
+flux-out.png
+flux-scene-out.png
+flux-req.json
+flux.json
+
 # Python
 __pycache__/
 *.py[cod]

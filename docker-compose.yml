@@ -454,6 +454,40 @@ services:
       start_period: 300s
     restart: unless-stopped
 
+  # Same Q4_K_M as :8103 + Unsloth mmproj-F16 (vision). Stop other GPU services on 12GB.
+  qwen35_9b_mmproj_gpu:
+    build:
+      context: .
+      dockerfile: Dockerfile.cuda
+    container_name: qwen3.5-9b-mmproj-gpu
+    ports:
+      - "8132:8132"
+    environment:
+      PORT: "8132"
+      MODEL_FILE: Qwen3.5-9B-Q4_K_M.gguf
+      MODEL_URL: https://huggingface.co/unsloth/Qwen3.5-9B-GGUF/resolve/main/Qwen3.5-9B-Q4_K_M.gguf
+      MMPROJ_FILE: Qwen3.5-9B-mmproj-F16.gguf
+      MMPROJ_URL: https://huggingface.co/unsloth/Qwen3.5-9B-GGUF/resolve/main/mmproj-F16.gguf
+      # Vision tokens are large; 2048 often OOMs the prompt on a single image.
+      N_CTX: ${N_CTX_MMPROJ:-24576}
+      N_THREADS: ${N_THREADS:-4}
+      N_PREDICT: ${N_PREDICT:-256}
+      N_PARALLEL: ${N_PARALLEL:-1}
+      N_GPU_LAYERS: ${N_GPU_LAYERS:-99}
+      REASONING: "off"
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - models:/models
+    gpus: all
+    profiles: ["gpu"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8132/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 8
+      start_period: 360s
+    restart: unless-stopped
+
   phi4_mini_gpu:
     build:
       context: .
@@ -1089,9 +1123,521 @@ services:
       start_period: 300s
     restart: unless-stopped
 
+  # Qwen3-Reranker-0.6B — text-only rerank (yes/no logits). Play / experiment.
+  qwen3_reranker_0_6b_gpu:
+    build: ./qwen3-reranker-0.6b
+    container_name: qwen3-reranker-0.6b-gpu
+    ports:
+      - "8129:8129"
+    environment:
+      PORT: "8129"
+      MODEL_ID: Qwen/Qwen3-Reranker-0.6B
+      HF_HOME: /cache/huggingface
+      RERANK_PROMPT: "Given a web search query, retrieve relevant passages that answer the query"
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - qwen3-reranker-0.6b-cache:/cache/huggingface
+    gpus: all
+    profiles: ["gpu"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8129/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 20
+      start_period: 600s
+    restart: unless-stopped
+
+  # Qwen3-VL-Reranker-2B — multimodal (query, document) relevance scores. Play / experiment.
+  qwen3_vl_reranker_2b_gpu:
+    build: ./qwen3-vl-reranker-2b
+    container_name: qwen3-vl-reranker-2b-gpu
+    ports:
+      - "8128:8128"
+    environment:
+      PORT: "8128"
+      MODEL_ID: Qwen/Qwen3-VL-Reranker-2B
+      HF_HOME: /cache/huggingface
+      RERANK_PROMPT: "Retrieve images or text relevant to the user's query."
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - qwen3-vl-reranker-2b-cache:/cache/huggingface
+    gpus: all
+    profiles: ["gpu"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8128/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 20
+      start_period: 1200s
+    restart: unless-stopped
+
+  # FLUX.2 [klein] 9B-KV INT8 (quanto) TE↔DiT swap — aims for ~12GB without layer-sequential thrash.
+  # Weights: albex123/flux2-klein-kv-qint8-offload (quant of gated NCL 9b-kv). ~5s/img class on 3080 Ti.
+  flux2_klein_9b_kv_int8_gpu:
+    build: ./flux2-klein-9b-kv-int8
+    container_name: flux2-klein-9b-kv-int8-gpu
+    ports:
+      - "8127:8127"
+    environment:
+      PORT: "8127"
+      MODEL_ID: albex123/flux2-klein-kv-qint8-offload
+      HF_HOME: /cache/huggingface
+      HEIGHT: "512"
+      WIDTH: "512"
+      STEPS: "4"
+      GUIDANCE_SCALE: "1.0"
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - flux2-klein-9b-kv-int8-cache:/cache/huggingface
+    gpus: all
+    profiles: ["gpu"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8127/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 20
+      start_period: 2400s
+    restart: unless-stopped
+
+  # FLUX.2 [klein] 9B-KV (diffusers Flux2KleinKVPipeline). Official ~29GB (5090+).
+  # Gated + FLUX Non-Commercial. On 12GB: 512² + sequential offload — may be very slow / OOM.
+  flux2_klein_9b_kv_gpu:
+    build: ./flux2-klein-9b-kv
+    container_name: flux2-klein-9b-kv-gpu
+    ports:
+      - "8126:8126"
+    environment:
+      PORT: "8126"
+      MODEL_ID: black-forest-labs/FLUX.2-klein-9b-kv
+      HF_HOME: /cache/huggingface
+      HEIGHT: "512"
+      WIDTH: "512"
+      STEPS: "4"
+      GUIDANCE_SCALE: "1.0"
+      DEVICE_MODE: sequential
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - flux2-klein-9b-kv-cache:/cache/huggingface
+    gpus: all
+    profiles: ["gpu"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8126/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 15
+      start_period: 1800s
+    restart: unless-stopped
+
+  # FLUX.2 [klein] 4B text-to-image (diffusers). Official ~13GB with CPU offload.
+  # On 12GB cards: keep HEIGHT/WIDTH at 512 and DEVICE_MODE=offload; stop other GPU services.
+  flux2_klein_gpu:
+    build: ./flux2-klein
+    container_name: flux2-klein-4b-gpu
+    ports:
+      - "8116:8116"
+    environment:
+      PORT: "8116"
+      MODEL_ID: black-forest-labs/FLUX.2-klein-4B
+      HF_HOME: /cache/huggingface
+      HEIGHT: "512"
+      WIDTH: "512"
+      STEPS: "4"
+      GUIDANCE_SCALE: "1.0"
+      # sequential: stream layers (good on 12GB). cuda thrashing on 3060 (~156s/img).
+      DEVICE_MODE: sequential
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - flux2-klein-cache:/cache/huggingface
+    gpus: all
+    profiles: ["gpu"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8116/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 900s
+    restart: unless-stopped
+
+  # Juggernaut XL v9 (SDXL photoreal). ~8GB VRAM. CreativeML Open RAIL-M.
+  juggernaut_xl_gpu:
+    build: ./juggernaut-xl
+    container_name: juggernaut-xl-v9-gpu
+    ports:
+      - "8117:8117"
+    environment:
+      PORT: "8117"
+      MODEL_ID: RunDiffusion/Juggernaut-XL-v9
+      HF_HOME: /cache/huggingface
+      HEIGHT: "1216"
+      WIDTH: "832"
+      STEPS: "30"
+      GUIDANCE_SCALE: "5.0"
+      DEVICE_MODE: cuda
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - juggernaut-xl-cache:/cache/huggingface
+    gpus: all
+    profiles: ["gpu"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8117/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 900s
+    restart: unless-stopped
+
+  # Juggernaut XI v11 (SDXL). Gated HF + CC BY-NC-ND. Same settings family as XL v9.
+  juggernaut_xi_gpu:
+    build: ./juggernaut-xi
+    container_name: juggernaut-xi-v11-gpu
+    ports:
+      - "8125:8125"
+    environment:
+      PORT: "8125"
+      MODEL_ID: RunDiffusion/Juggernaut-XI-v11
+      HF_HOME: /cache/huggingface
+      HEIGHT: "1216"
+      WIDTH: "832"
+      STEPS: "35"
+      GUIDANCE_SCALE: "5.0"
+      DEVICE_MODE: cuda
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - juggernaut-xi-cache:/cache/huggingface
+    gpus: all
+    profiles: ["gpu"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8125/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 900s
+    restart: unless-stopped
+
+  # Realistic Vision V5.1 (SD1.5 photoreal) + MSE VAE. ~2–4GB VRAM. CreativeML Open RAIL-M.
+  realistic_vision_gpu:
+    build: ./realistic-vision
+    container_name: realistic-vision-v51-gpu
+    ports:
+      - "8118:8118"
+    environment:
+      PORT: "8118"
+      MODEL_ID: SG161222/Realistic_Vision_V5.1_noVAE
+      VAE_ID: stabilityai/sd-vae-ft-mse
+      HF_HOME: /cache/huggingface
+      HEIGHT: "768"
+      WIDTH: "512"
+      STEPS: "30"
+      GUIDANCE_SCALE: "5.0"
+      DEVICE_MODE: cuda
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - realistic-vision-cache:/cache/huggingface
+    gpus: all
+    profiles: ["gpu"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8118/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 900s
+    restart: unless-stopped
+
+  # Animagine XL 4.0 (anime SDXL). ~8GB VRAM. CreativeML Open RAIL++-M.
+  animagine_xl_gpu:
+    build: ./animagine-xl
+    container_name: animagine-xl-4-gpu
+    ports:
+      - "8119:8119"
+    environment:
+      PORT: "8119"
+      MODEL_ID: cagliostrolab/animagine-xl-4.0
+      HF_HOME: /cache/huggingface
+      HEIGHT: "1216"
+      WIDTH: "832"
+      STEPS: "28"
+      GUIDANCE_SCALE: "5.0"
+      DEVICE_MODE: cuda
+      USE_LPW: "1"
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - animagine-xl-cache:/cache/huggingface
+    gpus: all
+    profiles: ["gpu"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8119/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 900s
+    restart: unless-stopped
+
+  # SDXL-Turbo. CFG 0, 1–4 steps, fp16-fix VAE. Commercial: Stability license.
+  sdxl_turbo_gpu:
+    build: ./sdxl-turbo
+    container_name: sdxl-turbo-gpu
+    ports:
+      - "8120:8120"
+    environment:
+      PORT: "8120"
+      MODEL_ID: stabilityai/sdxl-turbo
+      VAE_ID: madebyollin/sdxl-vae-fp16-fix
+      HF_HOME: /cache/huggingface
+      HEIGHT: "512"
+      WIDTH: "512"
+      STEPS: "4"
+      GUIDANCE_SCALE: "0.0"
+      DEVICE_MODE: cuda
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - sdxl-turbo-cache:/cache/huggingface
+    gpus: all
+    profiles: ["gpu"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8120/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 900s
+    restart: unless-stopped
+
+  # Z-Image-Turbo (Tongyi 6B DiT, ~8 NFEs). CFG 0. Card says ~16GB; use offload on 12GB.
+  z_image_turbo_gpu:
+    build: ./z-image-turbo
+    container_name: z-image-turbo-gpu
+    ports:
+      - "8121:8121"
+    environment:
+      PORT: "8121"
+      MODEL_ID: Tongyi-MAI/Z-Image-Turbo
+      HF_HOME: /cache/huggingface
+      HEIGHT: "512"
+      WIDTH: "512"
+      STEPS: "9"
+      GUIDANCE_SCALE: "0.0"
+      # sequential streams layers (safer on 12GB); offload can pin ~12GB and OOM mid-gen
+      DEVICE_MODE: sequential
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - z-image-turbo-cache:/cache/huggingface
+    gpus: all
+    profiles: ["gpu"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8121/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 1200s
+    restart: unless-stopped
+
+  # LTX-Video 2B distilled I2V / multi-condition. Stop other GPU image/video services first.
+  ltx_video_gpu:
+    build: ./ltx-video
+    container_name: ltx-video-2b-gpu
+    ports:
+      - "8122:8122"
+    environment:
+      PORT: "8122"
+      MODEL_ID: Lightricks/LTX-Video
+      TRANSFORMER_FILE: ltxv-2b-0.9.8-distilled.safetensors
+      HF_HOME: /cache/huggingface
+      HEIGHT: "640"
+      WIDTH: "360"
+      NUM_FRAMES: "9"
+      FPS: "24"
+      STEPS: "8"
+      GUIDANCE_SCALE: "1.0"
+      DECODE_TIMESTEP: "0.05"
+      IMAGE_COND_NOISE_SCALE: "0.025"
+      DEVICE_MODE: cuda
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      # Host cache so selective hf download and container share weights
+      - ./cache/ltx-video:/cache/huggingface
+    gpus: all
+    profiles: ["gpu"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8122/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 15
+      start_period: 1800s
+    restart: unless-stopped
+
+  # LTX-Video 2B distilled FP8 (no prompt enhancer). Sibling of ltx_video_gpu; same cache.
+  # Stop other GPU video services first (exclusive GPU).
+  ltx_video_fp8_gpu:
+    build: ./ltx-video-fp8
+    container_name: ltx-video-2b-fp8-gpu
+    # Override in case a patched/committed image lost the uvicorn CMD.
+    entrypoint: ["sh", "-c"]
+    command: ["uvicorn app:app --host 0.0.0.0 --port $${PORT}"]
+    ports:
+      - "8124:8124"
+    environment:
+      PORT: "8124"
+      MODEL_ID: Lightricks/LTX-Video
+      TRANSFORMER_FILE: ltxv-2b-0.9.8-distilled-fp8.safetensors
+      HF_HOME: /cache/huggingface
+      HEIGHT: "576"
+      WIDTH: "320"
+      NUM_FRAMES: "97"
+      FPS: "24"
+      GUIDANCE_SCALE: "1.0"
+      IMAGE_COND_NOISE_SCALE: "0.025"
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - ./cache/ltx-video:/cache/huggingface
+    gpus: all
+    profiles: ["gpu"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8124/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 15
+      start_period: 1800s
+    restart: unless-stopped
+
+  # Wan2.1 T2V 1.3B (Diffusers). Text-to-video; stop other GPU video services first.
+  wan_t2v_gpu:
+    build: ./wan-t2v
+    container_name: wan-t2v-1.3b-gpu
+    ports:
+      - "8123:8123"
+    environment:
+      PORT: "8123"
+      MODEL_ID: Wan-AI/Wan2.1-T2V-1.3B-Diffusers
+      HF_HOME: /cache/huggingface
+      HEIGHT: "360"
+      WIDTH: "640"
+      NUM_FRAMES: "9"
+      FPS: "16"
+      STEPS: "50"
+      GUIDANCE_SCALE: "6.0"
+      FLOW_SHIFT: "3.0"
+      DEVICE_MODE: cuda
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - ./cache/wan-t2v:/cache/huggingface
+    gpus: all
+    profiles: ["gpu"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8123/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 15
+      start_period: 1800s
+    restart: unless-stopped
+
+  # ComfyUI smoke host for Comfy-Org Z-Image-Turbo quant packs (INT8/FP4). Port 8188.
+  z_image_comfy_gpu:
+    build: ./z-image-comfy
+    container_name: z-image-comfy-gpu
+    ports:
+      - "8188:8188"
+    volumes:
+      - ./cache/z-image-turbo-comfy/split_files/diffusion_models:/app/ComfyUI/models/diffusion_models:ro
+      - ./cache/z-image-turbo-comfy/split_files/text_encoders:/app/ComfyUI/models/text_encoders:ro
+      - ./cache/z-image-turbo-comfy/split_files/vae:/app/ComfyUI/models/vae:ro
+      - ./cache/z-image-turbo-comfy/output:/app/ComfyUI/output
+    gpus: all
+    profiles: ["gpu"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8188/system_stats"]
+      interval: 15s
+      timeout: 10s
+      retries: 30
+      start_period: 300s
+    restart: unless-stopped
+
+  # ComfyUI: Flux.2-klein 9B distilled FP8 DiT + Comfy-Org FP4 TE + flux2-vae. Port 8189.
+  # Weights ~16.5 GB total — partial offload on 12 GB; better on 16–24 GB. DiT is gated (HF_TOKEN).
+  flux2_klein_9b_comfy_gpu:
+    build: ./flux2-klein-9b-comfy
+    container_name: flux2-klein-9b-comfy-gpu
+    ports:
+      - "8189:8189"
+    volumes:
+      - ./cache/flux2-klein-9b-comfy/split_files/diffusion_models:/app/ComfyUI/models/diffusion_models:ro
+      - ./cache/flux2-klein-9b-comfy/split_files/text_encoders:/app/ComfyUI/models/text_encoders:ro
+      - ./cache/flux2-klein-9b-comfy/split_files/vae:/app/ComfyUI/models/vae:ro
+      - ./cache/flux2-klein-9b-comfy/output:/app/ComfyUI/output
+    gpus: all
+    profiles: ["gpu"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8189/system_stats"]
+      interval: 15s
+      timeout: 10s
+      retries: 30
+      start_period: 300s
+    restart: unless-stopped
+
+  # Kokoro-82M TTS — CPU (no GPU). Port 8130.
+  kokoro_82m_cpu:
+    build: ./kokoro-82m
+    container_name: kokoro-82m-cpu
+    ports:
+      - "8130:8130"
+    environment:
+      PORT: "8130"
+      MODEL_ID: hexgrad/Kokoro-82M
+      LANG_CODE: a
+      DEVICE: cpu
+      DEFAULT_VOICE: af_heart
+      HF_HOME: /cache/huggingface
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - kokoro-82m-cache:/cache/huggingface
+    profiles: ["cpu", "kokoro"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8130/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 30
+      start_period: 300s
+    restart: unless-stopped
+
+  # Kokoro-82M TTS — GPU. Port 8131.
+  kokoro_82m_gpu:
+    build: ./kokoro-82m
+    container_name: kokoro-82m-gpu
+    ports:
+      - "8131:8131"
+    environment:
+      PORT: "8131"
+      MODEL_ID: hexgrad/Kokoro-82M
+      LANG_CODE: a
+      DEVICE: cuda
+      DEFAULT_VOICE: af_heart
+      HF_HOME: /cache/huggingface
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - kokoro-82m-cache:/cache/huggingface
+    gpus: all
+    profiles: ["gpu", "kokoro"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8131/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 30
+      start_period: 300s
+    restart: unless-stopped
+
 volumes:
   models:
   go-emotions-cache:
   bert-emotion-cache:
   emobank-vad-cache:
   vad-bert-cache:
+  flux2-klein-cache:
+  flux2-klein-9b-kv-cache:
+  flux2-klein-9b-kv-int8-cache:
+  qwen3-reranker-0.6b-cache:
+  qwen3-vl-reranker-2b-cache:
+  juggernaut-xl-cache:
+  juggernaut-xi-cache:
+  realistic-vision-cache:
+  animagine-xl-cache:
+  sdxl-turbo-cache:
+  z-image-turbo-cache:
+  kokoro-82m-cache:

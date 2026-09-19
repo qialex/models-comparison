@@ -1,0 +1,19 @@
+torch
+accelerate
+transformers>=4.47.2,<4.52.0
+safetensors
+sentencepiece
+protobuf
+Pillow
+fastapi
+uvicorn[standard]
+pydantic>=2
+huggingface_hub
+imageio[ffmpeg]
+av
+torchvision
+einops
+timm
+diffusers>=0.28.2
+# Official LTX inference stack (RectifiedFlowScheduler + CausalVideoAutoencoder)
+ltx-video[inference] @ git+https://github.com/Lightricks/LTX-Video.git

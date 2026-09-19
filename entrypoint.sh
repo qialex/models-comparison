@@ -36,6 +36,9 @@ SPEC_NGRAM_MOD_N_MAX="${SPEC_NGRAM_MOD_N_MAX:-}"
 FLASH_ATTN="${FLASH_ATTN:-}"
 # 1 / true / yes → --no-mmproj (vLLM --language-model-only)
 NO_MMPROJ="${NO_MMPROJ:-}"
+# Optional multimodal projector (download + --mmproj). Ignored if NO_MMPROJ is set.
+MMPROJ_FILE="${MMPROJ_FILE:-}"
+MMPROJ_URL="${MMPROJ_URL:-}"
 CHECKPOINT_MIN_STEP="${CHECKPOINT_MIN_STEP:-}"
 CTX_CHECKPOINTS="${CTX_CHECKPOINTS:-}"
 N_BATCH="${N_BATCH:-}"
@@ -80,6 +83,16 @@ if [ -n "${DRAFT_FILE}" ]; then
   download_gguf "${DRAFT_PATH}" "${DRAFT_URL}" "${DRAFT_FILE}"
 fi
 
+MMPROJ_PATH=""
+if [ -n "${MMPROJ_FILE}" ]; then
+  if [ -z "${MMPROJ_URL}" ]; then
+    echo "MMPROJ_FILE set but MMPROJ_URL is empty" >&2
+    exit 1
+  fi
+  MMPROJ_PATH="${MODEL_DIR}/${MMPROJ_FILE}"
+  download_gguf "${MMPROJ_PATH}" "${MMPROJ_URL}" "${MMPROJ_FILE}"
+fi
+
 set -- /app/llama-server \
   -m "${MODEL_PATH}" \
   --host "${HOST}" \
@@ -116,6 +129,8 @@ fi
 
 if [ -n "${NO_MMPROJ}" ]; then
   set -- "$@" --no-mmproj
+elif [ -n "${MMPROJ_PATH}" ]; then
+  set -- "$@" --mmproj "${MMPROJ_PATH}"
 fi
 
 if [ -n "${DRAFT_PATH}" ]; then

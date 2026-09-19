@@ -17,7 +17,20 @@ OpenAI-compatible APIs via **llama.cpp** GGUF (CPU by default; GPU services use 
 | `ministral3_gpu` | [Ministral-3-3B-Instruct-2512](https://huggingface.co/mistralai/Ministral-3-3B-Instruct-2512) (CUDA, profile `gpu`) | **8114** | Q4_K_M (~2.15GB) | GPU VRAM |
 | `granite41_8b_gpu` | [Granite 4.1 8B](https://huggingface.co/ibm-granite/granite-4.1-8b) (CUDA, profile `gpu`) | **8113** | Q4_K_M (~5.35GB) | GPU VRAM |
 | `qwen35_4b_dflash_gpu` | [Qwen3.5-4B](https://huggingface.co/Qwen/Qwen3.5-4B) + [DFlash](https://huggingface.co/z-lab/Qwen3.5-4B-DFlash) ([AtomicChat GGUF](https://huggingface.co/AtomicChat/Qwen3.5-4B-DFlash-GGUF), CUDA, profile `gpu`) | **8109** | Q4_K_M + DFlash Q8_0 (~2.74+0.69GB) | GPU VRAM |
+| `flux2_klein_gpu` | [FLUX.2-klein-4B](https://huggingface.co/black-forest-labs/FLUX.2-klein-4B) text-to-image (CUDA, profile `gpu`) | **8116** | BF16 + CPU offload | GPU VRAM (~13GB official; 512² on 12GB) |
+| `flux2_klein_9b_kv_gpu` | [FLUX.2-klein-9b-kv](https://huggingface.co/black-forest-labs/FLUX.2-klein-9b-kv) (gated, NCL) | **8126** | BF16 + sequential offload | GPU VRAM (~29GB official; 12GB = experiment only) |
+| `flux2_klein_9b_kv_int8_gpu` | [9b-kv INT8 quanto](https://huggingface.co/albex123/flux2-klein-kv-qint8-offload) TE↔DiT swap | **8127** | INT8 + component swap | ~12GB target (not full dual-resident) |
+| `qwen3_vl_reranker_2b_gpu` | [Qwen3-VL-Reranker-2B](https://huggingface.co/Qwen/Qwen3-VL-Reranker-2B) multimodal rerank | **8128** | BF16 | GPU VRAM (~2B VL) |
+| `qwen3_reranker_0_6b_gpu` | [Qwen3-Reranker-0.6B](https://huggingface.co/Qwen/Qwen3-Reranker-0.6B) text rerank | **8129** | BF16 | GPU VRAM (~0.6B) |
+| `juggernaut_xl_gpu` | [Juggernaut-XL-v9](https://huggingface.co/RunDiffusion/Juggernaut-XL-v9) SDXL text-to-image (CUDA, profile `gpu`) | **8117** | FP16 | GPU VRAM (~8GB) |
+| `juggernaut_xi_gpu` | [Juggernaut-XI-v11](https://huggingface.co/RunDiffusion/Juggernaut-XI-v11) SDXL (gated, CC BY-NC-ND) | **8125** | FP16 | GPU VRAM (~8GB; needs `HF_TOKEN`) |
+| `realistic_vision_gpu` | [Realistic_Vision_V5.1](https://huggingface.co/SG161222/Realistic_Vision_V5.1_noVAE) SD1.5 + MSE VAE (CUDA, profile `gpu`) | **8118** | FP16 | GPU VRAM (~2–4GB) |
+| `animagine_xl_gpu` | [Animagine XL 4.0](https://huggingface.co/cagliostrolab/animagine-xl-4.0) anime SDXL (CUDA, profile `gpu`) | **8119** | FP16 | GPU VRAM (~8GB) |
+| `sdxl_turbo_gpu` | [SDXL-Turbo](https://huggingface.co/stabilityai/sdxl-turbo) distilled SDXL (CUDA, profile `gpu`) | **8120** | FP16 | GPU VRAM (~6–8GB) |
+| `z_image_turbo_gpu` | [Z-Image-Turbo](https://huggingface.co/Tongyi-MAI/Z-Image-Turbo) 6B DiT turbo (CUDA, profile `gpu`) | **8121** | BF16 + offload | GPU VRAM (~16GB official; 512² + offload on 12GB) |
+| `ltx_video_gpu` | [LTX-Video 2B distilled](https://huggingface.co/Lightricks/LTX-Video) I2V (CUDA, profile `gpu`) | **8122** | BF16 + offload | GPU VRAM (12GB; stop other GPU image/video svcs) |
 | `qwen35_9b_gpu` | [Qwen3.5-9B](https://huggingface.co/Qwen/Qwen3.5-9B) (CUDA, profile `gpu`) | **8103** | Q4_K_M (~5.68GB) | GPU VRAM |
+| `qwen35_9b_mmproj_gpu` | [Qwen3.5-9B](https://huggingface.co/Qwen/Qwen3.5-9B) + Unsloth `mmproj-F16` (vision) | **8132** | Q4_K_M + mmproj (~5.68+0.88GB) | GPU VRAM (solo on 12GB) |
 | `phi4_mini_gpu` | [Phi-4-mini-reasoning](https://huggingface.co/microsoft/Phi-4-mini-reasoning) ([Bartowski GGUF](https://huggingface.co/bartowski/microsoft_Phi-4-mini-reasoning-GGUF), CUDA, profile `gpu`) | **8107** | Q4_K_M (~2.49GB) | GPU VRAM |
 | `ministral3` | [Ministral-3-3B-Instruct](https://huggingface.co/mistralai/Ministral-3-3B-Instruct-2512-GGUF) | **8084** | Q4_K_M (~2.15GB, text) | **4g** |
 | `minicpm5` | [MiniCPM5-1B](https://huggingface.co/openbmb/MiniCPM5-1B) | **8085** | Q4_K_M (~657MB) | 2g |
@@ -105,6 +118,7 @@ curl.exe -s http://localhost:8112/v1/models
 curl.exe -s http://localhost:8113/v1/models
 curl.exe -s http://localhost:8109/v1/models
 curl.exe -s http://localhost:8103/v1/models
+curl.exe -s http://localhost:8132/v1/models
 curl.exe -s http://localhost:8104/v1/models
 curl.exe -s http://localhost:8105/v1/models
 curl.exe -s http://localhost:8106/v1/models
@@ -114,6 +128,7 @@ curl.exe -s http://localhost:8095/health
 curl.exe -s http://localhost:8096/health
 curl.exe -s http://localhost:8097/health
 curl.exe -s http://localhost:8098/health
+curl.exe -s http://localhost:8116/health
 ```
 
 ```powershell
@@ -133,9 +148,9 @@ curl.exe -s http://localhost:8097/predict -H "Content-Type: application/json" --
 curl.exe -s http://localhost:8098/predict -H "Content-Type: application/json" --data-binary "@classify.json"
 ```
 
-API bases: `http://localhost:8080/v1` … `:8089/v1`, plus `:8091`–`:8094` (Bonsai 1.7B/4B/8B + TinyLlama), `:8099` (Bonsai 8B CUDA), `:8100` (Qwen3.5 2B CUDA), `:8101` (Bonsai 27B CUDA), `:8102` (Qwen3.5 4B CUDA), `:8111` (Qwen3.5 4B CUDA `--no-mmproj`), `:8110` (Qwen3.5 4B CUDA MTP), `:8112` (Qwen3.5 4B CUDA MTP + ngram-mod), `:8113` (Granite 4.1 8B CUDA), `:8109` (Qwen3.5 4B CUDA + DFlash), `:8103` (Qwen3.5 9B CUDA), `:8104` (Ternary-Bonsai 8B CUDA), `:8105` (Ternary-Bonsai 4B CUDA), `:8106` (Ternary-Bonsai 1.7B CUDA, Prism llama.cpp), and `:8107` (Phi-4-mini-reasoning CUDA) — GPU services use profile `gpu`. Classifiers: `POST :8095/classify` (go_emotions, **28** scores), `POST :8096/classify` (bert-emotion, **13** scores). VAD: `POST :8097/predict` — PEFT DeBERTa (optional quantile); `POST :8098/predict` — [vad-bert](https://huggingface.co/RobroKools/vad-bert) **raw logits only** `{V,A,D}` (no transform). CPU Bonsai-27B is opt-in on `:8090` via profile `bonsai27`.
+API bases: `http://localhost:8080/v1` … `:8089/v1`, plus `:8091`–`:8094` (Bonsai 1.7B/4B/8B + TinyLlama), `:8099` (Bonsai 8B CUDA), `:8100` (Qwen3.5 2B CUDA), `:8101` (Bonsai 27B CUDA), `:8102` (Qwen3.5 4B CUDA), `:8111` (Qwen3.5 4B CUDA `--no-mmproj`), `:8110` (Qwen3.5 4B CUDA MTP), `:8112` (Qwen3.5 4B CUDA MTP + ngram-mod), `:8113` (Granite 4.1 8B CUDA), `:8109` (Qwen3.5 4B CUDA + DFlash), `:8103` (Qwen3.5 9B CUDA), `:8132` (Qwen3.5 9B CUDA + mmproj vision), `:8104` (Ternary-Bonsai 8B CUDA), `:8105` (Ternary-Bonsai 4B CUDA), `:8106` (Ternary-Bonsai 1.7B CUDA, Prism llama.cpp), and `:8107` (Phi-4-mini-reasoning CUDA) — GPU services use profile `gpu`. Classifiers: `POST :8095/classify` (go_emotions, **28** scores), `POST :8096/classify` (bert-emotion, **13** scores). VAD: `POST :8097/predict` — PEFT DeBERTa (optional quantile); `POST :8098/predict` — [vad-bert](https://huggingface.co/RobroKools/vad-bert) **raw logits only** `{V,A,D}` (no transform). CPU Bonsai-27B is opt-in on `:8090` via profile `bonsai27`.
 
-**GPU:** Docker Desktop needs NVIDIA + WSL2 GPU. GPU services offload all layers (`N_GPU_LAYERS=99`). Same GGUF as CPU counterparts where those exist (`:8083`, `:8093`, `:8090`). Qwen3.5-9B Q4_K_M is ~5.68 GB — stop other GPU servers first on a 12 GB card. Ternary Q2_0 on `:8104`–`:8106` uses `Dockerfile.prism-cuda` ([PrismML fork](https://docs.prismml.com/run/llamacpp)); stock `server-cuda` cannot load it.
+**GPU:** Docker Desktop needs NVIDIA + WSL2 GPU. GPU services offload all layers (`N_GPU_LAYERS=99`). Same GGUF as CPU counterparts where those exist (`:8083`, `:8093`, `:8090`). Qwen3.5-9B Q4_K_M is ~5.68 GB — stop other GPU servers first on a 12 GB card. Vision variant `:8132` adds Unsloth `mmproj-F16` (~0.88 GB); do not run `:8103` and `:8132` together. Ternary Q2_0 on `:8104`–`:8106` uses `Dockerfile.prism-cuda` ([PrismML fork](https://docs.prismml.com/run/llamacpp)); stock `server-cuda` cannot load it.
 
 **Thinking:** Qwen3 / Qwen3.5 / Ministral / MiniCPM5 use `--reasoning off` (Qwen3 & MiniCPM5 are hybrid think/no-think). LFM uses a patched jinja that pre-closes `<think></think>`. OpenELM uses an Alpaca jinja + reverse-prompts (`### Explanation:` / `### Instruction:`) because the GGUF ChatML template is wrong and the model rarely emits EOS. Mistral recommends temp **below 0.1** for production. OpenELM is under Apple’s AMLR license (research).
 
@@ -295,6 +310,150 @@ Qwen 4B MTP + ngram (`:8112` recipe) with `-c 1024 -np 4 -n 8`:
 - Weights ~2.7 GB + KV for 4 slots @ 1024 ≈ fits in 6 GB.
 - Plan on **~65–88 tok/s decode** for unique work, not 300+.
 - Short outputs (≤8 tokens) are prefill-dominated; parallelism helps throughput more than decode.
+
+**Vast.ai template:** [`vast/qwen35-4b-mtp-ngram/`](vast/qwen35-4b-mtp-ngram/) — paste `onstart.sh` into a new template using `ghcr.io/ggml-org/llama.cpp:server-cuda`, port **8080**.
+
+### FLUX.2 [klein] 9B-KV INT8 (`:8127`)
+
+[albex123/flux2-klein-kv-qint8-offload](https://huggingface.co/albex123/flux2-klein-kv-qint8-offload) — qint8 + **TE↔DiT GPU swap** (VAE stays on GPU). Aims for **~12 GB** without layer-sequential thrash. ~5 s/img class on 3080 Ti. Quant of NCL 9B-KV.
+
+```powershell
+docker compose --profile gpu stop flux2_klein_9b_kv_gpu z_image_turbo_gpu flux2_klein_gpu
+docker compose --profile gpu up -d --build flux2_klein_9b_kv_int8_gpu
+curl.exe -s http://localhost:8127/health
+```
+
+**Vast.ai template:** [`vast/flux2-klein-9b-kv-int8/`](vast/flux2-klein-9b-kv-int8/) — **ID 706179** on account. Port **8127**. Needs **≥12 GB VRAM**, **≥32 GB system RAM**, **≥20 GB** instance disk.
+
+### FLUX.2 [klein] 9B Comfy FP4 TE (`:8189`)
+
+ComfyUI pack: smallest TE [`qwen_3_8b_fp4mixed`](https://huggingface.co/Comfy-Org/vae-text-encorder-for-flux-klein-9b) (~6.8 GB) + [`flux2-vae`](https://huggingface.co/Comfy-Org/vae-text-encorder-for-flux-klein-9b) + gated distilled DiT [`flux-2-klein-9b-fp8`](https://huggingface.co/black-forest-labs/FLUX.2-klein-9b-fp8) (~9.4 GB). **Not** the KV/INT8 FastAPI service — standard klein 9B T2I (4 steps). FP4 TE is native on Blackwell; Ampere emulates. Accept BFL terms + `HF_TOKEN` for the DiT.
+
+```powershell
+python flux2-klein-9b-comfy/download_models.py
+docker compose --profile gpu stop z_image_comfy_gpu flux2_klein_9b_kv_int8_gpu
+docker compose --profile gpu up -d --build flux2_klein_9b_comfy_gpu
+python flux2-klein-9b-comfy/smoke_api.py --workflow flux2-klein-9b-comfy/workflow_api_512.json
+```
+
+### FLUX.2 [klein] 9B-KV (`:8126`)
+
+[black-forest-labs/FLUX.2-klein-9b-kv](https://huggingface.co/black-forest-labs/FLUX.2-klein-9b-kv) — KV-cache multi-ref edit variant (`Flux2KleinKVPipeline`). **Gated** + **FLUX Non-Commercial**. Official **~29 GB** VRAM; on a 12 GB card use **512²** + `DEVICE_MODE=sequential` and expect slow thrashing or OOM. Needs `HF_TOKEN`.
+
+```powershell
+docker compose --profile gpu stop flux2_klein_gpu juggernaut_xi_gpu z_image_turbo_gpu ltx_video_gpu
+docker compose --profile gpu up -d --build flux2_klein_9b_kv_gpu
+curl.exe -s http://localhost:8126/health
+python tests/image-bench/run.py --model flux2-klein-9b-kv --backend flux2-klein-9b-kv --base http://127.0.0.1:8126 --height 512 --width 512 --steps 4 --timeout 900
+```
+
+### FLUX.2 [klein] 4B (`:8116`)
+
+[black-forest-labs/FLUX.2-klein-4B](https://huggingface.co/black-forest-labs/FLUX.2-klein-4B) — Apache 2.0 text-to-image (diffusers `Flux2KleinPipeline`). **Not tok/s** — measure **latency / images-per-sec**.
+
+| | |
+| --- | --- |
+| Official VRAM | **~13 GB** with `enable_model_cpu_offload` (RTX 3090/4070+) |
+| This box (3060 **12 GB**) | Use `DEVICE_MODE=sequential` (default). Full `cuda` loads ~15 GB and **thrashes** (~156 s/img at 512²) |
+| Measured (sequential, 512², 4 steps) | **~11 s/image** (~0.09 img/s), peak VRAM during gen **~1 GB** (layers streamed) |
+| Port | **8116** |
+
+```powershell
+docker compose --profile gpu stop qwen35_9b_gpu bonsai27_gpu qwen35_4b_ngram_gpu
+docker compose --profile gpu up -d --build flux2_klein_gpu
+curl.exe -s http://localhost:8116/health
+python tests/flux_latency.py --base http://127.0.0.1:8116
+```
+
+```powershell
+@'
+{"prompt":"A red apple on a wooden table","height":512,"width":512,"steps":4,"seed":0}
+'@ | Set-Content -Encoding ascii flux.json
+curl.exe -s http://localhost:8116/generate.png -H "Content-Type: application/json" --data-binary "@flux.json" -o flux-out.png
+```
+
+Endpoints: `GET /health`, `POST /generate` (JSON + base64), `POST /generate.png` (raw PNG).
+
+### Juggernaut XL v9 (`:8117`)
+
+[RunDiffusion/Juggernaut-XL-v9](https://huggingface.co/RunDiffusion/Juggernaut-XL-v9) — SDXL photoreal (CreativeML Open RAIL-M). Same HTTP API as `:8116`. Defaults: **832×1216**, **30** steps, CFG **5**, DPM++ 2M Karras. Comfortable on **~8 GB** VRAM.
+
+```powershell
+docker compose --profile gpu stop flux2_klein_gpu
+docker compose --profile gpu up -d --build juggernaut_xl_gpu
+curl.exe -s http://localhost:8117/health
+python tests/image-bench/run.py --model juggernaut-xl-v9 --backend juggernaut-xl-v9 --base http://127.0.0.1:8117 --height 1216 --width 832 --steps 30
+```
+
+### Juggernaut XI v11 (`:8125`)
+
+[RunDiffusion/Juggernaut-XI-v11](https://huggingface.co/RunDiffusion/Juggernaut-XI-v11) — latest SDXL Juggernaut. **Gated** (accept terms + `HF_TOKEN`). License **CC BY-NC-ND 4.0** (non-commercial). Defaults: **832×1216**, **35** steps, CFG **5**, DPM++ 2M Karras.
+
+```powershell
+docker compose --profile gpu stop juggernaut_xl_gpu ltx_video_gpu ltx_video_fp8_gpu wan_t2v_gpu
+docker compose --profile gpu up -d --build juggernaut_xi_gpu
+curl.exe -s http://localhost:8125/health
+python tests/image-bench/run.py --model juggernaut-xi-v11 --backend juggernaut-xi-v11 --base http://127.0.0.1:8125 --height 1216 --width 832 --steps 35
+```
+
+### Realistic Vision V5.1 (`:8118`)
+
+[SG161222/Realistic_Vision_V5.1_noVAE](https://huggingface.co/SG161222/Realistic_Vision_V5.1_noVAE) — SD 1.5 photoreal + [MSE VAE](https://huggingface.co/stabilityai/sd-vae-ft-mse). Same HTTP API. Defaults: **512×768**, **30** steps, CFG **5**, DPM++ 2M Karras, card negative prompt. Light on VRAM (~2–4 GB).
+
+```powershell
+docker compose --profile gpu stop juggernaut_xl_gpu
+docker compose --profile gpu up -d --build realistic_vision_gpu
+curl.exe -s http://localhost:8118/health
+python tests/image-bench/run.py --model realistic-vision-v5.1 --backend realistic-vision-v5.1 --base http://127.0.0.1:8118 --height 768 --width 512 --steps 30
+```
+
+### Animagine XL 4.0 (`:8119`)
+
+[cagliostrolab/animagine-xl-4.0](https://huggingface.co/cagliostrolab/animagine-xl-4.0) — anime SDXL (CreativeML Open RAIL++-M). Same HTTP API. Defaults: **832×1216**, **28** steps, CFG **5**, Euler a, card negative prompt. Prefers **tag-style** prompts (`1girl, …, masterpiece, high score, great score, absurdres`).
+
+```powershell
+docker compose --profile gpu stop realistic_vision_gpu
+docker compose --profile gpu up -d --build animagine_xl_gpu
+curl.exe -s http://localhost:8119/health
+python tests/image-bench/run.py --model animagine-xl-4.0 --backend animagine-xl-4.0 --base http://127.0.0.1:8119 --height 1216 --width 832 --steps 28
+```
+
+### SDXL-Turbo (`:8120`)
+
+[stabilityai/sdxl-turbo](https://huggingface.co/stabilityai/sdxl-turbo) — distilled SDXL. Same HTTP API. Defaults: **512×512**, **4** steps, **CFG 0**, VAE [`madebyollin/sdxl-vae-fp16-fix`](https://huggingface.co/madebyollin/sdxl-vae-fp16-fix). More than ~4 steps often *hurts* Turbo. Prefer 512²; commercial use needs a [Stability license](https://stability.ai/license).
+
+```powershell
+docker compose --profile gpu stop animagine_xl_gpu
+docker compose --profile gpu up -d --build sdxl_turbo_gpu
+curl.exe -s http://localhost:8120/health
+python tests/image-bench/run.py --model sdxl-turbo --backend sdxl-turbo --base http://127.0.0.1:8120 --height 512 --width 512 --steps 4
+```
+
+### Z-Image-Turbo (`:8121`)
+
+[Tongyi-MAI/Z-Image-Turbo](https://huggingface.co/Tongyi-MAI/Z-Image-Turbo) — 6B single-stream DiT turbo (~8 NFEs). Same HTTP API. Defaults: **512×512** (card 1024²), **9** steps, **CFG 0**. Official envelope ~**16 GB**; on a 12 GB card we use `DEVICE_MODE=offload`. Needs recent diffusers (`ZImagePipeline`).
+
+```powershell
+docker compose --profile gpu stop flux2_klein_gpu sdxl_turbo_gpu
+docker compose --profile gpu up -d --build z_image_turbo_gpu
+curl.exe -s http://localhost:8121/health
+python tests/image-bench/run.py --model z-image-turbo --backend z-image-turbo --base http://127.0.0.1:8121 --height 512 --width 512 --steps 9
+```
+
+### LTX-Video 2B distilled (`:8122`)
+
+[Lightricks/LTX-Video](https://huggingface.co/Lightricks/LTX-Video) — image-to-video (and first+last frame). Use **`ltxv-2b-0.9.8-distilled.safetensors`** only (not 13B / not full 254 GB tree). Selective cache: `cache/ltx-video/` via `python scripts/download_ltx_video.py`. Stop other GPU image/video services first.
+
+```powershell
+$env:HF_HOME = "$PWD\cache\ltx-video"
+python scripts/download_ltx_video.py
+docker compose --profile gpu stop flux2_klein_gpu z_image_turbo_gpu
+docker compose --profile gpu up -d --build ltx_video_gpu
+curl.exe -s http://localhost:8122/health
+python tests/video-bench/run.py --suite all --base http://127.0.0.1:8122 --skip-existing
+```
+
+See `tests/video-bench/README.md` for suites A–E.
 
 ## Tok/s suite (Ternary-Bonsai GPU)
 

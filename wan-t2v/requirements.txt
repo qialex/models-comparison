@@ -1,0 +1,15 @@
+torch
+accelerate
+transformers>=4.49.0
+safetensors
+sentencepiece
+protobuf
+Pillow
+fastapi
+uvicorn[standard]
+pydantic>=2
+huggingface_hub
+imageio[ffmpeg]
+av
+ftfy
+diffusers>=0.33.0

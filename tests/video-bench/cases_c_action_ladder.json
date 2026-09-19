@@ -1,0 +1,77 @@
+{
+  "suite": "video-i2v-c-action-ladder",
+  "purpose": "Idle → gesture → stand/walk → bigger action. Same 4 refs; escalating subject motion.",
+  "model_target": "ltxv-2b-0.9.8-distilled",
+  "defaults": {
+    "mode": "image_to_video",
+    "num_frames": 97,
+    "fps": 24,
+    "height": 576,
+    "width": 320,
+    "seed": 42,
+    "negative_prompt": "worst quality, inconsistent motion, blurry, jittery, distorted, morphing face, identity change, style change, different person, warped anatomy"
+  },
+  "lock_preamble": "IDENTITY AND STYLE LOCK FROM THE INPUT IMAGE. Exact same person and visual style. Only the described action changes.",
+  "cases": [
+    {
+      "id": "c01_clinic_idle",
+      "ref": "01_clinic_vet",
+      "motion_class": "idle",
+      "prompt": "Keep the exact same woman, dog, clinic, and photoreal style. Idle hold: breathing and one blink. Camera locked."
+    },
+    {
+      "id": "c02_clinic_gesture_stroke",
+      "ref": "01_clinic_vet",
+      "motion_class": "gesture",
+      "prompt": "Keep the exact same person and photoreal style. She slowly strokes the dog once with her hand, soft smile. Camera mostly static."
+    },
+    {
+      "id": "c03_clinic_stand_up",
+      "ref": "01_clinic_vet",
+      "motion_class": "stand",
+      "prompt": "Keep the exact same person, dog, and photoreal style. She rises from the kneel to standing while looking toward camera. Smooth continuous motion, identity locked."
+    },
+    {
+      "id": "c04_alley_idle",
+      "ref": "02_anime_alley",
+      "motion_class": "idle",
+      "prompt": "Keep the exact same anime character and anime style. Idle over-shoulder hold with tiny hair motion. Camera locked. No photoreal."
+    },
+    {
+      "id": "c05_alley_gesture_raise_can",
+      "ref": "02_anime_alley",
+      "motion_class": "gesture",
+      "prompt": "Keep the exact same anime character and anime style. She slightly raises one spray can as a small gesture, then settles. Camera static."
+    },
+    {
+      "id": "c06_alley_walk_deeper",
+      "ref": "02_anime_alley",
+      "motion_class": "walk",
+      "prompt": "Keep the exact same anime character and anime style. She takes two slow steps deeper into the alley looking back. Gentle tracking camera. Identity locked."
+    },
+    {
+      "id": "c07_armor_wave",
+      "ref": "03_anime_armor",
+      "motion_class": "gesture",
+      "prompt": "Keep the exact same anime armored woman and anime style. She smiles and waves with her free hand; spear stays on her back. Soft crowd bokeh."
+    },
+    {
+      "id": "c08_armor_turn_walk",
+      "ref": "03_anime_armor",
+      "motion_class": "walk",
+      "prompt": "Keep the exact same anime character and anime style. She turns more toward camera and takes one step forward at the convention. Camera follows lightly."
+    },
+    {
+      "id": "c09_station_map_adjust",
+      "ref": "04_station_man",
+      "motion_class": "gesture",
+      "prompt": "Keep the exact same man and photoreal station style. He adjusts the unfolded map toward the viewer and smiles. Camera mostly static."
+    },
+    {
+      "id": "c10_station_walk_along",
+      "ref": "04_station_man",
+      "motion_class": "walk",
+      "prompt": "Keep the exact same man and photoreal style. He takes two steps along the platform while still glancing at the map, then looks up to camera. Smooth tracking."
+    }
+  ]
+}

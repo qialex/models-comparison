@@ -1,0 +1,24 @@
+{
+  "refs": {
+    "01_clinic_vet": {
+      "file": "refs/01_clinic_vet.png",
+      "style": "photoreal",
+      "note": "Clinic vet + dog"
+    },
+    "02_anime_alley": {
+      "file": "refs/02_anime_alley.png",
+      "style": "anime",
+      "note": "Anime alley / spray cans"
+    },
+    "03_anime_armor": {
+      "file": "refs/03_anime_armor.png",
+      "style": "anime",
+      "note": "Anime convention armor"
+    },
+    "04_station_man": {
+      "file": "refs/04_station_man.png",
+      "style": "photoreal",
+      "note": "Train station map"
+    }
+  }
+}

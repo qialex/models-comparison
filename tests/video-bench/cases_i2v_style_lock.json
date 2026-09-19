@@ -1,0 +1,99 @@
+{
+  "suite": "video-i2v-style-lock-v1",
+  "purpose": "Animate the 4 identity/style-lock stills with LTX-Video (image+text). Judge: same person, same visual style, motion only.",
+  "model_target": "Lightricks/LTX-Video (prefer ltxv-2b-0.9.8-distilled on 12GB)",
+  "defaults": {
+    "mode": "image_to_video",
+    "num_frames": 97,
+    "fps": 24,
+    "height": 576,
+    "width": 320,
+    "seed": 42,
+    "negative_prompt": "worst quality, inconsistent motion, blurry, jittery, distorted, morphing face, identity change, style change, different person, warped anatomy"
+  },
+  "lock_preamble": "IDENTITY AND STYLE LOCK FROM THE INPUT IMAGE. Keep the exact same person and the exact same visual style as the first frame. Do not redesign the face, body, clothing, or art medium. Only add natural motion described below.",
+  "refs": {
+    "01_clinic_vet": {
+      "file": "refs/01_clinic_vet.png",
+      "source_asset": "C:/Users/Alex/.cursor/projects/c-Productivity-small-models/assets/c__Users_Alex_AppData_Roaming_Cursor_User_workspaceStorage_empty-window_images_9b37ac0f-95db-4ead-a951-2f1ef6703501-3fab70f4-7985-460d-9da3-0c7fc1da7b4f.png",
+      "note": "Clinic vet + dog photoreal still from identity/style lock set"
+    },
+    "02_anime_alley": {
+      "file": "refs/02_anime_alley.png",
+      "source_asset": "C:/Users/Alex/.cursor/projects/c-Productivity-small-models/assets/c__Users_Alex_AppData_Roaming_Cursor_User_workspaceStorage_empty-window_images_fa59d473-9bfa-442e-b610-2f8dd5e4cb21-f220ee35-c217-4ad8-abc4-dbdecb2fa557.png",
+      "note": "Anime alley / spray-can still"
+    },
+    "03_anime_armor": {
+      "file": "refs/03_anime_armor.png",
+      "source_asset": "C:/Users/Alex/.cursor/projects/c-Productivity-small-models/assets/c__Users_Alex_AppData_Roaming_Cursor_User_workspaceStorage_empty-window_images_6df47ef1-7911-4fec-9a6a-48cc0a000f8e-02dfc4eb-e5c0-4f53-b437-5c8feb09cd8b.png",
+      "note": "Anime convention armor / spear still"
+    },
+    "04_station_man": {
+      "file": "refs/04_station_man.png",
+      "source_asset": "C:/Users/Alex/.cursor/projects/c-Productivity-small-models/assets/c__Users_Alex_AppData_Roaming_Cursor_User_workspaceStorage_empty-window_images_db34fca8-fadc-4729-943c-0a106c3ee2a8-8fbc9dbf-fa23-4e46-910d-a053674916fa.png",
+      "note": "Train station map photoreal still"
+    }
+  },
+  "cases": [
+    {
+      "id": "01_clinic_subtle_life",
+      "ref": "01_clinic_vet",
+      "motion_class": "subtle_life",
+      "prompt": "Keep the exact same person and photoreal style as the input image. She remains kneeling in the clinic hallway with the dog. Subtle natural motion only: gentle breathing, slight hand stroke on the dog's fur, soft blink, tiny hair strands moving. Camera locked. No cut, no wardrobe change, no new characters."
+    },
+    {
+      "id": "02_clinic_camera_push_in",
+      "ref": "01_clinic_vet",
+      "motion_class": "camera",
+      "prompt": "Keep the exact same person, dog, clinic setting, and photoreal style as the input image. Slow cinematic camera push-in toward her face. She stays in the same kneeling pose, soft blink once. Lighting and identity unchanged."
+    },
+    {
+      "id": "03_clinic_stand_up_start",
+      "ref": "01_clinic_vet",
+      "motion_class": "subject_action",
+      "prompt": "Keep the exact same person, dog, clinic hallway, and photoreal style as the input image. She slowly begins to stand up from the kneel while still looking toward camera, one hand leaving the dog. Smooth continuous motion, no jump-cuts, face identity locked."
+    },
+    {
+      "id": "04_alley_neon_flicker",
+      "ref": "02_anime_alley",
+      "motion_class": "environment",
+      "prompt": "Keep the exact same anime character, outfit, alley, and anime illustration style as the input image. Overhead bulbs flicker softly, steam or night haze drifts, she holds the spray cans with a tiny stance shift and a slight over-the-shoulder glance settle. No style shift to photoreal."
+    },
+    {
+      "id": "05_alley_turn_to_camera",
+      "ref": "02_anime_alley",
+      "motion_class": "subject_action",
+      "prompt": "Keep the exact same anime character and anime style as the input image. She turns a bit more toward the camera, hair moves with the turn, spray cans stay in her hands. Camera mostly static with a tiny handheld feel. Do not change clothes or art style."
+    },
+    {
+      "id": "06_alley_walk_deeper",
+      "ref": "02_anime_alley",
+      "motion_class": "subject_action",
+      "prompt": "Keep the exact same anime character, clothes, and anime style as the input image. She takes two slow steps deeper into the alley while looking back over her shoulder. Camera follows with a gentle tracking move. Identity and lineart style locked."
+    },
+    {
+      "id": "07_armor_convention_wave",
+      "ref": "03_anime_armor",
+      "motion_class": "subject_action",
+      "prompt": "Keep the exact same anime character, pink-purple hair, fantasy armor, spear, convention hall, and anime style as the input image. She smiles and gives a small wave with her free hand while the spear stays on her back. Crowd bokeh stays soft in the background. No photoreal conversion."
+    },
+    {
+      "id": "08_armor_camera_orbit",
+      "ref": "03_anime_armor",
+      "motion_class": "camera",
+      "prompt": "Keep the exact same anime character, armor, spear, and anime style as the input image. Slow gentle camera orbit from slightly behind her toward a three-quarter front view. She holds the look-back pose with minimal body motion. Style and identity locked."
+    },
+    {
+      "id": "09_station_map_hand_motion",
+      "ref": "04_station_man",
+      "motion_class": "subject_action",
+      "prompt": "Keep the exact same man, train station, golden-hour photoreal style as the input image. He slightly adjusts the unfolded map toward the viewer, natural smile, camera strap moves a little. Background train and light stay consistent. No identity drift."
+    },
+    {
+      "id": "10_station_dolly_out",
+      "ref": "04_station_man",
+      "motion_class": "camera",
+      "prompt": "Keep the exact same man, outfit, station platform, and photoreal cinematic style as the input image. Slow dolly-out revealing more of the station arches and sunlight shafts while he holds the map and keeps looking toward camera. Face identity locked."
+    }
+  ]
+}

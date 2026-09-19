@@ -1,0 +1,77 @@
+{
+  "suite": "video-i2v-a-identity-stress",
+  "purpose": "Micro-motion only. Fail if face/body/style drift while barely moving.",
+  "model_target": "ltxv-2b-0.9.8-distilled",
+  "defaults": {
+    "mode": "image_to_video",
+    "num_frames": 97,
+    "fps": 24,
+    "height": 576,
+    "width": 320,
+    "seed": 42,
+    "negative_prompt": "worst quality, inconsistent motion, blurry, jittery, distorted, morphing face, identity change, style change, different person, warped anatomy, large motion, camera pan"
+  },
+  "lock_preamble": "IDENTITY AND STYLE LOCK FROM THE INPUT IMAGE. Exact same person and visual style. Only tiny natural micro-motion. No redesign.",
+  "cases": [
+    {
+      "id": "a01_clinic_blink_breath",
+      "ref": "01_clinic_vet",
+      "motion_class": "micro_motion",
+      "prompt": "Keep the exact same woman, dog, clinic hallway, and photoreal style. Almost still: one soft blink, gentle chest breathing, tiny fur motion on the dog. Camera locked. No pose change."
+    },
+    {
+      "id": "a02_clinic_hair_strands",
+      "ref": "01_clinic_vet",
+      "motion_class": "micro_motion",
+      "prompt": "Keep the exact same person and photoreal style. Only a few hair strands drift slightly; soft blink once. Kneeling pose and dog unchanged. Camera locked."
+    },
+    {
+      "id": "a03_alley_eye_dart",
+      "ref": "02_anime_alley",
+      "motion_class": "micro_motion",
+      "prompt": "Keep the exact same anime character, clothes, alley, and anime lineart style. Tiny eye glance and almost imperceptible breathing. Spray cans stay still in her hands. Camera locked. No photoreal conversion."
+    },
+    {
+      "id": "a04_alley_hair_flutter",
+      "ref": "02_anime_alley",
+      "motion_class": "micro_motion",
+      "prompt": "Keep the exact same anime character and anime style. Soft hair flutter only, tiny stance settle. No walking, no turn. Camera locked."
+    },
+    {
+      "id": "a05_armor_smile_settle",
+      "ref": "03_anime_armor",
+      "motion_class": "micro_motion",
+      "prompt": "Keep the exact same anime armored woman, spear, convention hall, and anime style. Soft smile settle and one blink. Minimal body motion. Camera locked."
+    },
+    {
+      "id": "a06_armor_cape_ripple",
+      "ref": "03_anime_armor",
+      "motion_class": "micro_motion",
+      "prompt": "Keep the exact same anime character and style. Tiny fabric/armor strap ripple and soft blink. Pose held. Camera locked. No photoreal."
+    },
+    {
+      "id": "a07_station_blink_smile",
+      "ref": "04_station_man",
+      "motion_class": "micro_motion",
+      "prompt": "Keep the exact same man, station, map, and photoreal golden-hour style. Soft blink and barely-there smile settle. Map hands almost still. Camera locked."
+    },
+    {
+      "id": "a08_station_strap_sway",
+      "ref": "04_station_man",
+      "motion_class": "micro_motion",
+      "prompt": "Keep the exact same man and photoreal style. Camera strap sways a millimeter; soft breathing. No walk, no head turn. Camera locked."
+    },
+    {
+      "id": "a09_clinic_dog_ear_twitch",
+      "ref": "01_clinic_vet",
+      "motion_class": "micro_motion",
+      "prompt": "Keep the exact same woman, dog, and photoreal clinic style. Dog ear twitches once; woman holds pose with tiny breath. Camera locked."
+    },
+    {
+      "id": "a10_armor_spear_glint",
+      "ref": "03_anime_armor",
+      "motion_class": "micro_motion",
+      "prompt": "Keep the exact same anime character, armor, spear, and anime style. Subtle light glint on spear metal and one blink. Body frozen otherwise. Camera locked."
+    }
+  ]
+}

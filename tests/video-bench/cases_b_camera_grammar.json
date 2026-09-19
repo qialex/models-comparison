@@ -1,0 +1,77 @@
+{
+  "suite": "video-i2v-b-camera-grammar",
+  "purpose": "Same still, different camera moves. Subject mostly holds pose; judge camera intent + identity lock.",
+  "model_target": "ltxv-2b-0.9.8-distilled",
+  "defaults": {
+    "mode": "image_to_video",
+    "num_frames": 97,
+    "fps": 24,
+    "height": 576,
+    "width": 320,
+    "seed": 42,
+    "negative_prompt": "worst quality, inconsistent motion, blurry, jittery, distorted, morphing face, identity change, style change, different person, warped anatomy"
+  },
+  "lock_preamble": "IDENTITY AND STYLE LOCK FROM THE INPUT IMAGE. Exact same person and visual style. Camera moves as described; subject motion minimal.",
+  "cases": [
+    {
+      "id": "b01_clinic_push_in",
+      "ref": "01_clinic_vet",
+      "motion_class": "camera_push",
+      "prompt": "Keep the exact same woman, dog, clinic, and photoreal style. Slow cinematic push-in toward her face. She holds the kneel with one soft blink."
+    },
+    {
+      "id": "b02_clinic_pull_out",
+      "ref": "01_clinic_vet",
+      "motion_class": "camera_pull",
+      "prompt": "Keep the exact same person, dog, and photoreal style. Slow pull-out revealing more of the clinic hallway. She stays kneeling, minimal motion."
+    },
+    {
+      "id": "b03_alley_pan_left",
+      "ref": "02_anime_alley",
+      "motion_class": "camera_pan",
+      "prompt": "Keep the exact same anime character and anime style. Slow pan left across the neon alley while she holds her over-shoulder look. No style flip to photo."
+    },
+    {
+      "id": "b04_alley_pan_right",
+      "ref": "02_anime_alley",
+      "motion_class": "camera_pan",
+      "prompt": "Keep the exact same anime character and anime style. Slow pan right along the alley wall and spray cans. She stays in pose with tiny hair motion."
+    },
+    {
+      "id": "b05_armor_orbit",
+      "ref": "03_anime_armor",
+      "motion_class": "camera_orbit",
+      "prompt": "Keep the exact same anime armored woman and anime style. Gentle orbit from three-quarter back toward more frontal. She holds the look-back pose."
+    },
+    {
+      "id": "b06_armor_tilt_up",
+      "ref": "03_anime_armor",
+      "motion_class": "camera_tilt",
+      "prompt": "Keep the exact same anime character and style. Slow tilt up from mid torso toward face and spear tip. Soft convention bokeh stays. No photoreal."
+    },
+    {
+      "id": "b07_station_dolly_out",
+      "ref": "04_station_man",
+      "motion_class": "camera_dolly",
+      "prompt": "Keep the exact same man, map, and photoreal station style. Slow dolly-out revealing more arches and sun shafts. He holds the map pose."
+    },
+    {
+      "id": "b08_station_dolly_in",
+      "ref": "04_station_man",
+      "motion_class": "camera_dolly",
+      "prompt": "Keep the exact same man and photoreal style. Slow dolly-in toward his face and map. Soft blink once. Background stays consistent."
+    },
+    {
+      "id": "b09_clinic_handheld",
+      "ref": "01_clinic_vet",
+      "motion_class": "camera_handheld",
+      "prompt": "Keep the exact same woman, dog, and photoreal style. Subtle handheld micro-shake only, no big reframing. She barely breathes and blinks once."
+    },
+    {
+      "id": "b10_alley_crane_up",
+      "ref": "02_anime_alley",
+      "motion_class": "camera_crane",
+      "prompt": "Keep the exact same anime character and anime style. Slow gentle crane-up revealing more hanging bulbs and alley depth. She holds pose with tiny glance settle."
+    }
+  ]
+}

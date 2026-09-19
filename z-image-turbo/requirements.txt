@@ -1,0 +1,11 @@
+torch
+accelerate
+transformers
+safetensors
+sentencepiece
+protobuf
+Pillow
+fastapi
+uvicorn[standard]
+pydantic>=2
+# diffusers installed from git in Dockerfile (ZImagePipeline)

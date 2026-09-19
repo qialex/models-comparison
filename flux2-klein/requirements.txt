@@ -1,0 +1,14 @@
+# Install from PyPI first; Flux2KleinPipeline needs a recent diffusers.
+# If import fails at runtime, rebuild with DIFFUSERS_GIT=1.
+torch
+accelerate
+transformers
+safetensors
+sentencepiece
+protobuf
+Pillow
+fastapi
+uvicorn[standard]
+pydantic>=2
+# Prefer git tip for Flux2KleinPipeline; fall back handled in Dockerfile
+diffusers>=0.36.0

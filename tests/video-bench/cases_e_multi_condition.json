@@ -1,0 +1,87 @@
+{
+  "suite": "video-i2v-e-multi-condition",
+  "purpose": "First+last frame conditioning. Same-ref holds identity; same-style pairs test interpolation.",
+  "model_target": "ltxv-2b-0.9.8-distilled",
+  "defaults": {
+    "mode": "multi_condition",
+    "num_frames": 97,
+    "fps": 24,
+    "height": 576,
+    "width": 320,
+    "seed": 42,
+    "negative_prompt": "worst quality, inconsistent motion, blurry, jittery, distorted, morphing face, identity change, style change, different person, warped anatomy, abrupt cut"
+  },
+  "lock_preamble": "Condition on first and last frames. Honor both endpoint images. Smooth motion between them; keep style consistent with the endpoints.",
+  "cases": [
+    {
+      "id": "e01_clinic_hold_endpoints",
+      "ref": "01_clinic_vet",
+      "ref_last": "01_clinic_vet",
+      "motion_class": "multi_hold",
+      "prompt": "Start and end on the same clinic photoreal still of the woman and dog. In the middle: soft blink, breath, tiny hand stroke. Return to the same pose by the last frame. Style stays photoreal."
+    },
+    {
+      "id": "e02_alley_hold_endpoints",
+      "ref": "02_anime_alley",
+      "ref_last": "02_anime_alley",
+      "motion_class": "multi_hold",
+      "prompt": "Start and end on the same anime alley still. Middle: tiny turn and hair motion, then settle back. Stay anime illustration throughout."
+    },
+    {
+      "id": "e03_armor_hold_endpoints",
+      "ref": "03_anime_armor",
+      "ref_last": "03_anime_armor",
+      "motion_class": "multi_hold",
+      "prompt": "Start and end on the same anime armor still. Middle: small wave then hand lowers back. Anime style locked."
+    },
+    {
+      "id": "e04_station_hold_endpoints",
+      "ref": "04_station_man",
+      "ref_last": "04_station_man",
+      "motion_class": "multi_hold",
+      "prompt": "Start and end on the same station photoreal still. Middle: map adjust and smile, then return. Photoreal locked."
+    },
+    {
+      "id": "e05_clinic_action_return",
+      "ref": "01_clinic_vet",
+      "ref_last": "01_clinic_vet",
+      "motion_class": "multi_action",
+      "prompt": "First and last frames match the clinic still. She starts to stand in the middle then settles back toward the kneeling endpoint. Same woman, dog, photoreal."
+    },
+    {
+      "id": "e06_alley_walk_return",
+      "ref": "02_anime_alley",
+      "ref_last": "02_anime_alley",
+      "motion_class": "multi_action",
+      "prompt": "First and last frames match the anime alley still. She steps deeper then returns toward the starting framing. Anime style locked."
+    },
+    {
+      "id": "e07_photo_cross_clinic_to_station",
+      "ref": "01_clinic_vet",
+      "ref_last": "04_station_man",
+      "motion_class": "multi_cross_same_style",
+      "prompt": "Photoreal only. Interpolate smoothly from the clinic woman+dog first frame toward the station man+map last frame. Keep photographic realism; expect subject change between endpoints."
+    },
+    {
+      "id": "e08_photo_cross_station_to_clinic",
+      "ref": "04_station_man",
+      "ref_last": "01_clinic_vet",
+      "motion_class": "multi_cross_same_style",
+      "prompt": "Photoreal only. Interpolate from the station man first frame toward the clinic woman+dog last frame. Smooth transition, photographic style throughout."
+    },
+    {
+      "id": "e09_anime_cross_alley_to_armor",
+      "ref": "02_anime_alley",
+      "ref_last": "03_anime_armor",
+      "motion_class": "multi_cross_same_style",
+      "prompt": "Anime illustration only. Interpolate from alley girl first frame toward armored convention girl last frame. Stay 2D anime; never photoreal."
+    },
+    {
+      "id": "e10_anime_cross_armor_to_alley",
+      "ref": "03_anime_armor",
+      "ref_last": "02_anime_alley",
+      "motion_class": "multi_cross_same_style",
+      "prompt": "Anime illustration only. Interpolate from armored girl first frame toward alley girl last frame. Stay anime lineart/cel style throughout."
+    }
+  ]
+}

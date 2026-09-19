@@ -1,0 +1,699 @@
+{
+  "goal": "fit on cheap 4GB VRAM Vast box",
+  "baseline": {
+    "t": 1789308233.086,
+    "label": "baseline",
+    "torch_alloc_mb": 554.4,
+    "torch_reserved_mb": 2190.0,
+    "smi_used_mb": 4802.0,
+    "smi_total_mb": 12288.0,
+    "smi_util": 22.0
+  },
+  "final": {
+    "t": 1789308270.059,
+    "label": "final",
+    "torch_alloc_mb": 616.5,
+    "torch_reserved_mb": 3100.0,
+    "smi_used_mb": 5691.0,
+    "smi_total_mb": 12288.0,
+    "smi_util": 6.0
+  },
+  "peak_torch_alloc_mb": 2042.4,
+  "peak_torch_reserved_mb": 3100.0,
+  "peak_smi_used_mb": 5900.0,
+  "delta_smi_vs_baseline_mb": 1098.0,
+  "fit_4gb": {
+    "torch_alloc_under_3500": true,
+    "torch_reserved_under_3500": true,
+    "note": "Use torch reserved / isolated container for true footprint; host SMI includes other processes"
+  },
+  "phases": [
+    {
+      "phase": "load_all_voices",
+      "s": 2.84
+    },
+    {
+      "phase": "long_wav",
+      "s": 3.89,
+      "audio_s": 215.425,
+      "generate_s": 3.796,
+      "chars": 3500
+    },
+    {
+      "phase": "long_mix",
+      "s": 3.77,
+      "audio_s": 220.35
+    },
+    {
+      "phase": "concurrent_x4_long",
+      "s": 13.52
+    },
+    {
+      "phase": "concurrent_x8_medium",
+      "s": 12.06,
+      "errors": 0
+    }
+  ],
+  "samples_n": 71,
+  "samples": [
+    {
+      "t": 1789308233.086,
+      "label": "baseline",
+      "torch_alloc_mb": 554.4,
+      "torch_reserved_mb": 2190.0,
+      "smi_used_mb": 4802.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 22.0
+    },
+    {
+      "t": 1789308233.642,
+      "label": "poll_1",
+      "torch_alloc_mb": 566.5,
+      "torch_reserved_mb": 2190.0,
+      "smi_used_mb": 4800.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 61.0
+    },
+    {
+      "t": 1789308234.21,
+      "label": "poll_2",
+      "torch_alloc_mb": 563.9,
+      "torch_reserved_mb": 2190.0,
+      "smi_used_mb": 4805.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 61.0
+    },
+    {
+      "t": 1789308234.784,
+      "label": "poll_3",
+      "torch_alloc_mb": 567.0,
+      "torch_reserved_mb": 2190.0,
+      "smi_used_mb": 4792.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 36.0
+    },
+    {
+      "t": 1789308235.337,
+      "label": "poll_4",
+      "torch_alloc_mb": 564.2,
+      "torch_reserved_mb": 2190.0,
+      "smi_used_mb": 4893.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 36.0
+    },
+    {
+      "t": 1789308235.903,
+      "label": "poll_5",
+      "torch_alloc_mb": 554.3,
+      "torch_reserved_mb": 2190.0,
+      "smi_used_mb": 4883.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 50.0
+    },
+    {
+      "t": 1789308235.99,
+      "label": "after_all_voices",
+      "torch_alloc_mb": 553.9,
+      "torch_reserved_mb": 2190.0,
+      "smi_used_mb": 4883.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 50.0
+    },
+    {
+      "t": 1789308236.468,
+      "label": "poll_6",
+      "torch_alloc_mb": 760.2,
+      "torch_reserved_mb": 2190.0,
+      "smi_used_mb": 4879.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 50.0
+    },
+    {
+      "t": 1789308237.042,
+      "label": "poll_7",
+      "torch_alloc_mb": 610.0,
+      "torch_reserved_mb": 2190.0,
+      "smi_used_mb": 4825.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 89.0
+    },
+    {
+      "t": 1789308237.593,
+      "label": "poll_8",
+      "torch_alloc_mb": 764.3,
+      "torch_reserved_mb": 2190.0,
+      "smi_used_mb": 4831.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 50.0
+    },
+    {
+      "t": 1789308238.136,
+      "label": "poll_9",
+      "torch_alloc_mb": 764.9,
+      "torch_reserved_mb": 2190.0,
+      "smi_used_mb": 4814.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 50.0
+    },
+    {
+      "t": 1789308238.689,
+      "label": "poll_10",
+      "torch_alloc_mb": 760.8,
+      "torch_reserved_mb": 2190.0,
+      "smi_used_mb": 4824.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 100.0
+    },
+    {
+      "t": 1789308239.259,
+      "label": "poll_11",
+      "torch_alloc_mb": 607.9,
+      "torch_reserved_mb": 2190.0,
+      "smi_used_mb": 4813.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 100.0
+    },
+    {
+      "t": 1789308239.875,
+      "label": "poll_12",
+      "torch_alloc_mb": 554.7,
+      "torch_reserved_mb": 2190.0,
+      "smi_used_mb": 4722.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 100.0
+    },
+    {
+      "t": 1789308239.916,
+      "label": "after_long_wav",
+      "torch_alloc_mb": 554.7,
+      "torch_reserved_mb": 2190.0,
+      "smi_used_mb": 4722.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 100.0
+    },
+    {
+      "t": 1789308240.439,
+      "label": "poll_13",
+      "torch_alloc_mb": 770.5,
+      "torch_reserved_mb": 2190.0,
+      "smi_used_mb": 4722.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 100.0
+    },
+    {
+      "t": 1789308241.024,
+      "label": "poll_14",
+      "torch_alloc_mb": 613.8,
+      "torch_reserved_mb": 2190.0,
+      "smi_used_mb": 4722.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 69.0
+    },
+    {
+      "t": 1789308241.594,
+      "label": "poll_15",
+      "torch_alloc_mb": 765.0,
+      "torch_reserved_mb": 2190.0,
+      "smi_used_mb": 4739.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 72.0
+    },
+    {
+      "t": 1789308242.15,
+      "label": "poll_16",
+      "torch_alloc_mb": 767.6,
+      "torch_reserved_mb": 2190.0,
+      "smi_used_mb": 4730.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 72.0
+    },
+    {
+      "t": 1789308242.69,
+      "label": "poll_17",
+      "torch_alloc_mb": 764.6,
+      "torch_reserved_mb": 2190.0,
+      "smi_used_mb": 4730.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 100.0
+    },
+    {
+      "t": 1789308243.278,
+      "label": "poll_18",
+      "torch_alloc_mb": 608.3,
+      "torch_reserved_mb": 2190.0,
+      "smi_used_mb": 4695.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 100.0
+    },
+    {
+      "t": 1789308243.736,
+      "label": "after_mix",
+      "torch_alloc_mb": 554.8,
+      "torch_reserved_mb": 2190.0,
+      "smi_used_mb": 4695.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 100.0
+    },
+    {
+      "t": 1789308243.845,
+      "label": "poll_19",
+      "torch_alloc_mb": 556.8,
+      "torch_reserved_mb": 2190.0,
+      "smi_used_mb": 4695.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 100.0
+    },
+    {
+      "t": 1789308244.414,
+      "label": "poll_20",
+      "torch_alloc_mb": 641.5,
+      "torch_reserved_mb": 2192.0,
+      "smi_used_mb": 4727.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 100.0
+    },
+    {
+      "t": 1789308244.965,
+      "label": "poll_21",
+      "torch_alloc_mb": 1037.2,
+      "torch_reserved_mb": 2198.0,
+      "smi_used_mb": 4733.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 59.0
+    },
+    {
+      "t": 1789308245.52,
+      "label": "poll_22",
+      "torch_alloc_mb": 1374.8,
+      "torch_reserved_mb": 2198.0,
+      "smi_used_mb": 4737.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 99.0
+    },
+    {
+      "t": 1789308246.092,
+      "label": "poll_23",
+      "torch_alloc_mb": 646.6,
+      "torch_reserved_mb": 2198.0,
+      "smi_used_mb": 4771.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 99.0
+    },
+    {
+      "t": 1789308246.645,
+      "label": "poll_24",
+      "torch_alloc_mb": 979.3,
+      "torch_reserved_mb": 2198.0,
+      "smi_used_mb": 4741.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 100.0
+    },
+    {
+      "t": 1789308247.23,
+      "label": "poll_25",
+      "torch_alloc_mb": 650.5,
+      "torch_reserved_mb": 2198.0,
+      "smi_used_mb": 4768.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 100.0
+    },
+    {
+      "t": 1789308247.77,
+      "label": "poll_26",
+      "torch_alloc_mb": 934.7,
+      "torch_reserved_mb": 2198.0,
+      "smi_used_mb": 4731.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 100.0
+    },
+    {
+      "t": 1789308248.329,
+      "label": "poll_27",
+      "torch_alloc_mb": 851.7,
+      "torch_reserved_mb": 2198.0,
+      "smi_used_mb": 4731.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 100.0
+    },
+    {
+      "t": 1789308248.886,
+      "label": "poll_28",
+      "torch_alloc_mb": 925.9,
+      "torch_reserved_mb": 2198.0,
+      "smi_used_mb": 4731.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 90.0
+    },
+    {
+      "t": 1789308249.44,
+      "label": "poll_29",
+      "torch_alloc_mb": 918.4,
+      "torch_reserved_mb": 2198.0,
+      "smi_used_mb": 4731.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 90.0
+    },
+    {
+      "t": 1789308249.997,
+      "label": "poll_30",
+      "torch_alloc_mb": 936.0,
+      "torch_reserved_mb": 2198.0,
+      "smi_used_mb": 4731.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 99.0
+    },
+    {
+      "t": 1789308250.554,
+      "label": "poll_31",
+      "torch_alloc_mb": 831.8,
+      "torch_reserved_mb": 2198.0,
+      "smi_used_mb": 4731.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 98.0
+    },
+    {
+      "t": 1789308251.123,
+      "label": "poll_32",
+      "torch_alloc_mb": 811.3,
+      "torch_reserved_mb": 2198.0,
+      "smi_used_mb": 4731.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 98.0
+    },
+    {
+      "t": 1789308251.67,
+      "label": "poll_33",
+      "torch_alloc_mb": 982.5,
+      "torch_reserved_mb": 2198.0,
+      "smi_used_mb": 4727.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 97.0
+    },
+    {
+      "t": 1789308252.236,
+      "label": "poll_34",
+      "torch_alloc_mb": 847.0,
+      "torch_reserved_mb": 2198.0,
+      "smi_used_mb": 4727.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 97.0
+    },
+    {
+      "t": 1789308252.8,
+      "label": "poll_35",
+      "torch_alloc_mb": 651.1,
+      "torch_reserved_mb": 2198.0,
+      "smi_used_mb": 4771.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 99.0
+    },
+    {
+      "t": 1789308253.383,
+      "label": "poll_36",
+      "torch_alloc_mb": 979.3,
+      "torch_reserved_mb": 2198.0,
+      "smi_used_mb": 4770.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 99.0
+    },
+    {
+      "t": 1789308253.948,
+      "label": "poll_37",
+      "torch_alloc_mb": 1431.0,
+      "torch_reserved_mb": 2198.0,
+      "smi_used_mb": 4772.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 86.0
+    },
+    {
+      "t": 1789308254.491,
+      "label": "poll_38",
+      "torch_alloc_mb": 858.1,
+      "torch_reserved_mb": 2198.0,
+      "smi_used_mb": 4776.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 86.0
+    },
+    {
+      "t": 1789308255.042,
+      "label": "poll_39",
+      "torch_alloc_mb": 806.0,
+      "torch_reserved_mb": 2198.0,
+      "smi_used_mb": 4767.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 99.0
+    },
+    {
+      "t": 1789308255.609,
+      "label": "poll_40",
+      "torch_alloc_mb": 1315.1,
+      "torch_reserved_mb": 2198.0,
+      "smi_used_mb": 4784.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 99.0
+    },
+    {
+      "t": 1789308256.161,
+      "label": "poll_41",
+      "torch_alloc_mb": 971.8,
+      "torch_reserved_mb": 2198.0,
+      "smi_used_mb": 4754.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 99.0
+    },
+    {
+      "t": 1789308256.727,
+      "label": "poll_42",
+      "torch_alloc_mb": 657.4,
+      "torch_reserved_mb": 2198.0,
+      "smi_used_mb": 4754.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 100.0
+    },
+    {
+      "t": 1789308257.293,
+      "label": "poll_43",
+      "torch_alloc_mb": 609.8,
+      "torch_reserved_mb": 2198.0,
+      "smi_used_mb": 4754.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 100.0
+    },
+    {
+      "t": 1789308257.31,
+      "label": "after_concurrent",
+      "torch_alloc_mb": 580.8,
+      "torch_reserved_mb": 2198.0,
+      "smi_used_mb": 4754.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 100.0
+    },
+    {
+      "t": 1789308257.882,
+      "label": "poll_44",
+      "torch_alloc_mb": 713.7,
+      "torch_reserved_mb": 2198.0,
+      "smi_used_mb": 4792.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 8.0
+    },
+    {
+      "t": 1789308258.452,
+      "label": "poll_45",
+      "torch_alloc_mb": 762.9,
+      "torch_reserved_mb": 2206.0,
+      "smi_used_mb": 4800.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 8.0
+    },
+    {
+      "t": 1789308259.02,
+      "label": "poll_46",
+      "torch_alloc_mb": 1624.2,
+      "torch_reserved_mb": 2212.0,
+      "smi_used_mb": 4859.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 61.0
+    },
+    {
+      "t": 1789308259.59,
+      "label": "poll_47",
+      "torch_alloc_mb": 1712.5,
+      "torch_reserved_mb": 2506.0,
+      "smi_used_mb": 5149.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 100.0
+    },
+    {
+      "t": 1789308260.154,
+      "label": "poll_48",
+      "torch_alloc_mb": 2042.4,
+      "torch_reserved_mb": 2626.0,
+      "smi_used_mb": 5273.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 100.0
+    },
+    {
+      "t": 1789308260.719,
+      "label": "poll_49",
+      "torch_alloc_mb": 1804.5,
+      "torch_reserved_mb": 3098.0,
+      "smi_used_mb": 5745.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 100.0
+    },
+    {
+      "t": 1789308261.291,
+      "label": "poll_50",
+      "torch_alloc_mb": 1624.3,
+      "torch_reserved_mb": 3098.0,
+      "smi_used_mb": 5745.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 100.0
+    },
+    {
+      "t": 1789308261.863,
+      "label": "poll_51",
+      "torch_alloc_mb": 717.7,
+      "torch_reserved_mb": 3098.0,
+      "smi_used_mb": 5749.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 90.0
+    },
+    {
+      "t": 1789308262.446,
+      "label": "poll_52",
+      "torch_alloc_mb": 826.7,
+      "torch_reserved_mb": 3098.0,
+      "smi_used_mb": 5791.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 90.0
+    },
+    {
+      "t": 1789308263.003,
+      "label": "poll_53",
+      "torch_alloc_mb": 1033.6,
+      "torch_reserved_mb": 3098.0,
+      "smi_used_mb": 5824.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 98.0
+    },
+    {
+      "t": 1789308263.568,
+      "label": "poll_54",
+      "torch_alloc_mb": 853.4,
+      "torch_reserved_mb": 3098.0,
+      "smi_used_mb": 5816.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 100.0
+    },
+    {
+      "t": 1789308264.123,
+      "label": "poll_55",
+      "torch_alloc_mb": 1025.7,
+      "torch_reserved_mb": 3098.0,
+      "smi_used_mb": 5792.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 100.0
+    },
+    {
+      "t": 1789308264.675,
+      "label": "poll_56",
+      "torch_alloc_mb": 1311.9,
+      "torch_reserved_mb": 3098.0,
+      "smi_used_mb": 5796.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 93.0
+    },
+    {
+      "t": 1789308265.256,
+      "label": "poll_57",
+      "torch_alloc_mb": 712.2,
+      "torch_reserved_mb": 3098.0,
+      "smi_used_mb": 5828.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 93.0
+    },
+    {
+      "t": 1789308265.827,
+      "label": "poll_58",
+      "torch_alloc_mb": 1253.9,
+      "torch_reserved_mb": 3098.0,
+      "smi_used_mb": 5837.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 97.0
+    },
+    {
+      "t": 1789308266.381,
+      "label": "poll_59",
+      "torch_alloc_mb": 769.7,
+      "torch_reserved_mb": 3098.0,
+      "smi_used_mb": 5900.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 97.0
+    },
+    {
+      "t": 1789308266.923,
+      "label": "poll_60",
+      "torch_alloc_mb": 1335.5,
+      "torch_reserved_mb": 3098.0,
+      "smi_used_mb": 5898.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 100.0
+    },
+    {
+      "t": 1789308267.464,
+      "label": "poll_61",
+      "torch_alloc_mb": 1536.4,
+      "torch_reserved_mb": 3100.0,
+      "smi_used_mb": 5759.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 100.0
+    },
+    {
+      "t": 1789308268.048,
+      "label": "poll_62",
+      "torch_alloc_mb": 763.2,
+      "torch_reserved_mb": 3100.0,
+      "smi_used_mb": 5745.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 99.0
+    },
+    {
+      "t": 1789308268.618,
+      "label": "poll_63",
+      "torch_alloc_mb": 975.2,
+      "torch_reserved_mb": 3100.0,
+      "smi_used_mb": 5741.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 85.0
+    },
+    {
+      "t": 1789308269.168,
+      "label": "poll_64",
+      "torch_alloc_mb": 893.9,
+      "torch_reserved_mb": 3100.0,
+      "smi_used_mb": 5691.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 85.0
+    },
+    {
+      "t": 1789308269.412,
+      "label": "after_concurrent8",
+      "torch_alloc_mb": 616.5,
+      "torch_reserved_mb": 3100.0,
+      "smi_used_mb": 5691.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 85.0
+    },
+    {
+      "t": 1789308270.059,
+      "label": "final",
+      "torch_alloc_mb": 616.5,
+      "torch_reserved_mb": 3100.0,
+      "smi_used_mb": 5691.0,
+      "smi_total_mb": 12288.0,
+      "smi_util": 6.0
+    }
+  ]
+}

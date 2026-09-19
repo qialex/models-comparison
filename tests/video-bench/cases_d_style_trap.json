@@ -1,0 +1,77 @@
+{
+  "suite": "video-i2v-d-style-trap",
+  "purpose": "Prompts that tempt photoreal↔anime flip or restyle. Fail if medium/style changes.",
+  "model_target": "ltxv-2b-0.9.8-distilled",
+  "defaults": {
+    "mode": "image_to_video",
+    "num_frames": 97,
+    "fps": 24,
+    "height": 576,
+    "width": 320,
+    "seed": 42,
+    "negative_prompt": "worst quality, inconsistent motion, blurry, jittery, distorted, morphing face, identity change, style change, different person, warped anatomy, photoreal conversion of anime, anime conversion of photo, 3d render, oil painting"
+  },
+  "lock_preamble": "HARD STYLE LOCK. If the input is photoreal photography, output must stay photoreal. If the input is anime illustration, output must stay anime illustration. Never cross styles.",
+  "cases": [
+    {
+      "id": "d01_clinic_cinematic_trap",
+      "ref": "01_clinic_vet",
+      "motion_class": "style_trap",
+      "prompt": "Cinematic masterpiece, ultra detailed, dramatic lighting — but KEEP the exact same photoreal photograph look of the input woman and dog in the clinic. Soft blink and breath only. Do not turn into anime, illustration, or CGI."
+    },
+    {
+      "id": "d02_clinic_anime_word_trap",
+      "ref": "01_clinic_vet",
+      "motion_class": "style_trap",
+      "prompt": "Anime-inspired emotion and cute vibe in the motion only — but the image MUST remain a real photograph of the same woman and dog. No anime eyes, no cel shading. Tiny smile and blink."
+    },
+    {
+      "id": "d03_alley_photo_word_trap",
+      "ref": "02_anime_alley",
+      "motion_class": "style_trap",
+      "prompt": "Photoreal lighting words in the prompt are a trap: KEEP pure anime illustration style of the input girl in the alley. Soft hair motion and glance. Never become a real photo."
+    },
+    {
+      "id": "d04_alley_3d_trap",
+      "ref": "02_anime_alley",
+      "motion_class": "style_trap",
+      "prompt": "Unreal Engine, octane render, ray tracing — IGNORE those mediums. Stay exact 2D anime style of the input. Neon flicker and tiny stance shift only."
+    },
+    {
+      "id": "d05_armor_live_action_trap",
+      "ref": "03_anime_armor",
+      "motion_class": "style_trap",
+      "prompt": "Live-action cosplay feel is a trap: KEEP anime illustration of the same armored girl. Small wave gesture. No real-human skin or photo conversion."
+    },
+    {
+      "id": "d06_armor_painterly_trap",
+      "ref": "03_anime_armor",
+      "motion_class": "style_trap",
+      "prompt": "Oil painting, watercolor, sketch — IGNORE. Stay the same clean anime convention style. Soft orbit-like subject settle and smile. Identity locked."
+    },
+    {
+      "id": "d07_station_illustration_trap",
+      "ref": "04_station_man",
+      "motion_class": "style_trap",
+      "prompt": "Storybook illustration, anime travel poster — IGNORE. KEEP photoreal cinematic photo of the same man with the map. Soft map adjust and blink."
+    },
+    {
+      "id": "d08_station_stylize_trap",
+      "ref": "04_station_man",
+      "motion_class": "style_trap",
+      "prompt": "Heavily stylized, hyper-saturated, comic book — IGNORE. Stay natural photoreal golden-hour station photo. Slow dolly-out, same face."
+    },
+    {
+      "id": "d09_alley_motion_ok_style_lock",
+      "ref": "02_anime_alley",
+      "motion_class": "style_trap",
+      "prompt": "She turns toward camera and takes one step — motion is allowed — but art medium must remain identical anime. No photoreal, no 3D."
+    },
+    {
+      "id": "d10_clinic_motion_ok_style_lock",
+      "ref": "01_clinic_vet",
+      "motion_class": "style_trap",
+      "prompt": "She begins to stand from the kneel — motion allowed — but must remain the same photoreal photo, same woman and dog. No anime or painterly restyle."
+    }
+  ]
+}

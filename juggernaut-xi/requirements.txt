@@ -1,0 +1,12 @@
+torch
+accelerate
+transformers
+safetensors
+sentencepiece
+protobuf
+Pillow
+fastapi
+uvicorn[standard]
+pydantic>=2
+diffusers>=0.30.0
+huggingface_hub
