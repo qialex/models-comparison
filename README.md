@@ -34,6 +34,7 @@ OpenAI-compatible APIs via **llama.cpp** GGUF (CPU by default; GPU services use 
 | `phi4_mini_gpu` | [Phi-4-mini-reasoning](https://huggingface.co/microsoft/Phi-4-mini-reasoning) ([Bartowski GGUF](https://huggingface.co/bartowski/microsoft_Phi-4-mini-reasoning-GGUF), CUDA, profile `gpu`) | **8107** | Q4_K_M (~2.49GB) | GPU VRAM |
 | `ministral3` | [Ministral-3-3B-Instruct](https://huggingface.co/mistralai/Ministral-3-3B-Instruct-2512-GGUF) | **8084** | Q4_K_M (~2.15GB, text) | **4g** |
 | `minicpm5` | [MiniCPM5-1B](https://huggingface.co/openbmb/MiniCPM5-1B) | **8085** | Q4_K_M (~657MB) | 2g |
+| `minicpm5_2b_gpu` | [MiniCPM5-2B](https://huggingface.co/openbmb/MiniCPM5-2B) ([GGUF](https://huggingface.co/openbmb/MiniCPM5-2B-GGUF), CUDA, profile `gpu`) | **8135** | Q4_K_M (~1.56GB) | GPU VRAM |
 | `gemma3` | [Gemma 3 1B IT](https://huggingface.co/google/gemma-3-1b-it) | **8086** | Q4_K_M (~806MB) | 2g |
 | `llama32` | [Llama 3.2 1B Instruct](https://huggingface.co/meta-llama/Llama-3.2-1B-Instruct) | **8087** | Q4_K_M (~808MB) | 2g |
 | `qwen17` | [Qwen3-1.7B](https://huggingface.co/Qwen/Qwen3-1.7B) | **8088** | Q4_K_M (~1.1GB) | 3g |
@@ -148,7 +149,7 @@ curl.exe -s http://localhost:8097/predict -H "Content-Type: application/json" --
 curl.exe -s http://localhost:8098/predict -H "Content-Type: application/json" --data-binary "@classify.json"
 ```
 
-API bases: `http://localhost:8080/v1` … `:8089/v1`, plus `:8091`–`:8094` (Bonsai 1.7B/4B/8B + TinyLlama), `:8099` (Bonsai 8B CUDA), `:8100` (Qwen3.5 2B CUDA), `:8101` (Bonsai 27B CUDA), `:8102` (Qwen3.5 4B CUDA), `:8111` (Qwen3.5 4B CUDA `--no-mmproj`), `:8110` (Qwen3.5 4B CUDA MTP), `:8112` (Qwen3.5 4B CUDA MTP + ngram-mod), `:8113` (Granite 4.1 8B CUDA), `:8109` (Qwen3.5 4B CUDA + DFlash), `:8103` (Qwen3.5 9B CUDA), `:8132` (Qwen3.5 9B CUDA + mmproj vision), `:8104` (Ternary-Bonsai 8B CUDA), `:8105` (Ternary-Bonsai 4B CUDA), `:8106` (Ternary-Bonsai 1.7B CUDA, Prism llama.cpp), and `:8107` (Phi-4-mini-reasoning CUDA) — GPU services use profile `gpu`. Classifiers: `POST :8095/classify` (go_emotions, **28** scores), `POST :8096/classify` (bert-emotion, **13** scores). VAD: `POST :8097/predict` — PEFT DeBERTa (optional quantile); `POST :8098/predict` — [vad-bert](https://huggingface.co/RobroKools/vad-bert) **raw logits only** `{V,A,D}` (no transform). CPU Bonsai-27B is opt-in on `:8090` via profile `bonsai27`.
+API bases: `http://localhost:8080/v1` … `:8089/v1`, plus `:8091`–`:8094` (Bonsai 1.7B/4B/8B + TinyLlama), `:8099` (Bonsai 8B CUDA), `:8100` (Qwen3.5 2B CUDA), `:8101` (Bonsai 27B CUDA), `:8102` (Qwen3.5 4B CUDA), `:8111` (Qwen3.5 4B CUDA `--no-mmproj`), `:8110` (Qwen3.5 4B CUDA MTP), `:8112` (Qwen3.5 4B CUDA MTP + ngram-mod), `:8113` (Granite 4.1 8B CUDA), `:8109` (Qwen3.5 4B CUDA + DFlash), `:8103` (Qwen3.5 9B CUDA), `:8132` (Qwen3.5 9B CUDA + mmproj vision), `:8104` (Ternary-Bonsai 8B CUDA), `:8105` (Ternary-Bonsai 4B CUDA), `:8106` (Ternary-Bonsai 1.7B CUDA, Prism llama.cpp), `:8107` (Phi-4-mini-reasoning CUDA), `:8133` (Ternary-Bonsai-2 27B PTQ1_0 CUDA), `:8134` (Qwen3.8-27B UD-IQ1_S CUDA), and `:8135` (MiniCPM5-2B CUDA) — GPU services use profile `gpu`. Classifiers: `POST :8095/classify` (go_emotions, **28** scores), `POST :8096/classify` (bert-emotion, **13** scores). VAD: `POST :8097/predict` — PEFT DeBERTa (optional quantile); `POST :8098/predict` — [vad-bert](https://huggingface.co/RobroKools/vad-bert) **raw logits only** `{V,A,D}` (no transform). CPU Bonsai-27B is opt-in on `:8090` via profile `bonsai27`.
 
 **GPU:** Docker Desktop needs NVIDIA + WSL2 GPU. GPU services offload all layers (`N_GPU_LAYERS=99`). Same GGUF as CPU counterparts where those exist (`:8083`, `:8093`, `:8090`). Qwen3.5-9B Q4_K_M is ~5.68 GB — stop other GPU servers first on a 12 GB card. Vision variant `:8132` adds Unsloth `mmproj-F16` (~0.88 GB); do not run `:8103` and `:8132` together. Ternary Q2_0 on `:8104`–`:8106` uses `Dockerfile.prism-cuda` ([PrismML fork](https://docs.prismml.com/run/llamacpp)); stock `server-cuda` cannot load it.
 
@@ -457,10 +458,10 @@ See `tests/video-bench/README.md` for suites A–E.
 
 ## Tok/s suite (Ternary-Bonsai GPU)
 
-Q2_0 needs the [PrismML llama.cpp fork](https://docs.prismml.com/run/llamacpp) (`Dockerfile.prism-cuda`). Run **one** GPU server at a time on a 12 GB card:
+Q2_0 / PTQ1_0 / PQ2_0 need the [PrismML llama.cpp fork](https://docs.prismml.com/run/llamacpp) (`Dockerfile.prism-cuda`). Run **one** GPU server at a time on a 12 GB card:
 
 ```powershell
-docker compose --profile gpu stop bonsai8_gpu qwen35_2b_gpu qwen35_4b_gpu qwen35_9b_gpu bonsai27_gpu ternary_bonsai8_gpu ternary_bonsai4_gpu ternary_bonsai17_gpu phi4_mini_gpu
+docker compose --profile gpu stop bonsai8_gpu qwen35_2b_gpu qwen35_4b_gpu qwen35_9b_gpu bonsai27_gpu ternary_bonsai8_gpu ternary_bonsai4_gpu ternary_bonsai17_gpu ternary_bonsai2_27b_gpu phi4_mini_gpu qwen_image_edit_comfy_gpu
 
 docker compose --profile gpu up -d ternary_bonsai8_gpu
 python tests/toksec_bonsai27.py --base http://127.0.0.1:8104
@@ -476,6 +477,11 @@ python tests/toksec_bonsai27.py --base http://127.0.0.1:8106
 docker compose --profile gpu stop ternary_bonsai17_gpu
 docker compose --profile gpu up -d phi4_mini_gpu
 python tests/toksec_bonsai27.py --base http://127.0.0.1:8107
+
+# Ternary-Bonsai-2-27B PTQ1_0 (~6 GB) — :8133
+docker compose --profile gpu stop ternary_bonsai17_gpu phi4_mini_gpu
+docker compose --profile gpu up -d --build ternary_bonsai2_27b_gpu
+python tests/toksec_bonsai27.py --base http://127.0.0.1:8133
 ```
 
 ## Stop

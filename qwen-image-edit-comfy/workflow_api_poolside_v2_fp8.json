@@ -1,0 +1,171 @@
+{
+  "1": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "qwen_image_edit_2509_fp8_e4m3fn.safetensors",
+      "weight_dtype": "default"
+    }
+  },
+  "12": {
+    "class_type": "LoraLoaderModelOnly",
+    "inputs": {
+      "model": [
+        "1",
+        0
+      ],
+      "lora_name": "Qwen-Image-Edit-2509-Lightning-4steps-V1.0-bf16.safetensors",
+      "strength_model": 1.0
+    }
+  },
+  "8": {
+    "class_type": "ModelSamplingAuraFlow",
+    "inputs": {
+      "shift": 3,
+      "model": [
+        "12",
+        0
+      ]
+    }
+  },
+  "13": {
+    "class_type": "CFGNorm",
+    "inputs": {
+      "model": [
+        "8",
+        0
+      ],
+      "strength": 1.0
+    }
+  },
+  "2": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "qwen_2.5_vl_7b_fp8_scaled.safetensors",
+      "type": "qwen_image",
+      "device": "default"
+    }
+  },
+  "3": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "qwen_image_vae.safetensors"
+    }
+  },
+  "4": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "smoke_input.png"
+    }
+  },
+  "14": {
+    "class_type": "ImageScaleToTotalPixels",
+    "inputs": {
+      "image": [
+        "4",
+        0
+      ],
+      "upscale_method": "lanczos",
+      "megapixels": 1.0,
+      "resolution_steps": 1
+    }
+  },
+  "5": {
+    "class_type": "TextEncodeQwenImageEditPlus",
+    "inputs": {
+      "clip": [
+        "2",
+        0
+      ],
+      "prompt": "Kai is captured from a high, low-angle perspective floating just below the surface of a saltwater pool in a sweltering Maldivian lagoon. The shot frames her full body, her torso angled slightly as she propels herself forward with strong, defined arm muscles. She wears minimal, silver-plated bikini bottoms that are wet and clinging, revealing the distinct texture of her skin and the way the water distorts her curves. Her long, straight blonde hair floats in a curtain around her face, strands distinct against the blue water. Her eyes are wide open and locked onto the camera lens, emerging from the water with a look of intense, clear-eyed command. Sunlight filters through the water surface above, creating caustic patterns that dance across her skin and highlight the pores and subtle oil on her face. A single drop of water hangs on her upper lip, catching the light. The surrounding air is thick and humid, implied by the steam rising faintly from the warm water and the stillness of the environment. This is a moment of pure, aquatic strength where she dominates the cool, sun-drenched depth.",
+      "vae": [
+        "3",
+        0
+      ],
+      "image1": [
+        "4",
+        0
+      ]
+    }
+  },
+  "6": {
+    "class_type": "TextEncodeQwenImageEditPlus",
+    "inputs": {
+      "clip": [
+        "2",
+        0
+      ],
+      "prompt": "",
+      "vae": [
+        "3",
+        0
+      ],
+      "image1": [
+        "4",
+        0
+      ]
+    }
+  },
+  "7": {
+    "class_type": "VAEEncode",
+    "inputs": {
+      "pixels": [
+        "14",
+        0
+      ],
+      "vae": [
+        "3",
+        0
+      ]
+    }
+  },
+  "9": {
+    "class_type": "KSampler",
+    "inputs": {
+      "seed": 604731,
+      "steps": 4,
+      "cfg": 1.0,
+      "sampler_name": "euler",
+      "scheduler": "simple",
+      "denoise": 1.0,
+      "model": [
+        "13",
+        0
+      ],
+      "positive": [
+        "5",
+        0
+      ],
+      "negative": [
+        "6",
+        0
+      ],
+      "latent_image": [
+        "7",
+        0
+      ]
+    }
+  },
+  "10": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "9",
+        0
+      ],
+      "vae": [
+        "3",
+        0
+      ]
+    }
+  },
+  "11": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "filename_prefix": "qwen_edit_poolside_v2_fp8",
+      "images": [
+        "10",
+        0
+      ]
+    }
+  }
+}

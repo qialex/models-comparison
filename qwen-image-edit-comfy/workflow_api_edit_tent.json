@@ -1,0 +1,171 @@
+{
+  "1": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "qwen_image_edit_2509_fp8_e4m3fn.safetensors",
+      "weight_dtype": "default"
+    }
+  },
+  "12": {
+    "class_type": "LoraLoaderModelOnly",
+    "inputs": {
+      "model": [
+        "1",
+        0
+      ],
+      "lora_name": "Qwen-Image-Edit-2509-Lightning-4steps-V1.0-bf16.safetensors",
+      "strength_model": 1.0
+    }
+  },
+  "8": {
+    "class_type": "ModelSamplingAuraFlow",
+    "inputs": {
+      "shift": 3,
+      "model": [
+        "12",
+        0
+      ]
+    }
+  },
+  "13": {
+    "class_type": "CFGNorm",
+    "inputs": {
+      "model": [
+        "8",
+        0
+      ],
+      "strength": 1.0
+    }
+  },
+  "2": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "qwen_2.5_vl_7b_fp8_scaled.safetensors",
+      "type": "qwen_image",
+      "device": "default"
+    }
+  },
+  "3": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "qwen_image_vae.safetensors"
+    }
+  },
+  "4": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "smoke_input.png"
+    }
+  },
+  "14": {
+    "class_type": "ImageScaleToTotalPixels",
+    "inputs": {
+      "image": [
+        "4",
+        0
+      ],
+      "upscale_method": "lanczos",
+      "megapixels": 1.0,
+      "resolution_steps": 1
+    }
+  },
+  "5": {
+    "class_type": "TextEncodeQwenImageEditPlus",
+    "inputs": {
+      "clip": [
+        "2",
+        0
+      ],
+      "prompt": "SCENE TO DRAW NOW (AUTHORITATIVE \u2014 BEATS THE REFERENCE IMAGE):\nKai is a woman. Draw Kai clearly as a woman \u2014 correct body, face presentation, and wardrobe. Never swap to the opposite sex.\nLOCATION TO DRAW (EXPLICIT \u2014 HIGHEST PRIORITY FOR ENVIRONMENT):\nbeachside tent in a hidden cove at sunset\nPaint this place filling most of the frame. Kai is physically inside it.\nDo not substitute a different location (no workshop/studio/office unless location says so).\nSOCIAL POST (action, mood, wardrobe cues):\nmy dad taught me that silence keeps you alive, but I realized I'm starving for a conversation. here, with this cat and the dying sun. does anyone else feel like the ocean is just loud when they aren't talking to a human?\nREQUIREMENTS:\n- Draw Kai doing what the post describes, inside the location above.\n- Kai must read unambiguously as a woman in the image.\n- Wardrobe and weather must match the post (e.g. surf \u2192 wet clothes, ocean around them).\n- New pose. New crop. Not a poster edit.\nREFERENCE IMAGE RULES (STRICT):\n- Use the reference ONLY for face + hair identity and art style.\n- Keep Kai's gender as a woman even if the reference is ambiguous \u2014 never masculinize/feminize against the gender lock.\n- THROW AWAY reference background, room, workshop, construction site, studio, tools, buckets, concrete walls, poster pose.\n- If the reference shows an indoor workspace but LOCATION TO DRAW is elsewhere \u2014 LOCATION wins. Redraw the world.\n\nPRIORITY ORDER (HIGHEST \u2192 LOWEST) \u2014 FOLLOW EXACTLY:\n1) SCENE TO DRAW NOW \u2014 location, time, mood, atmosphere. This text OWNS the entire environment, decorations, architecture, props, lighting, weather, and camera.\n2) Fresh composition \u2014 invent a new framing, pose, crop, and camera angle for THIS scene.\n3) Reference image \u2014 ONLY Kai's face identity + art medium/style. Discard poster layout/pose/background.\n4) Recent chat lines \u2014 optional pose/action hints only. They must NEVER change the location.\n\nCRITICAL: When text and reference image disagree, obey the text for place and composition. Use the image only for who Kai is.\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\nSECTION A \u2014 ENVIRONMENT / DECORATIONS (MOST IMPORTANT)\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n- Read SCENE TO DRAW NOW again. Paint THAT place and nothing else.\n- Fill \u226570% of the frame with environmental detail from the scene beat: walls, floors, furniture, sky, ground, tools, vehicles, foliage, signage, weather, practical lights \u2014 whatever belongs to THAT location.\n- Kai occupies the place as a person inside it (mid-shot or full scene). The place is not a blurry halo behind a portrait.\n- Camera sits inside / on the location. Wide or medium story-illustration framing. Not a headshot. Not key-art. Not marketing poster.\n- If SCENE TO DRAW NOW describes an alley, warehouse mural, racetrack paddock, cafe, apartment, forest, office, train, etc. \u2014 paint that exact class of place.\n- NEVER invent beach, ocean, lagoon, turquoise water, overwater villa, tropical deck, or starry ocean horizon UNLESS SCENE TO DRAW NOW explicitly says so.\n- NEVER invent a music-bedroom studio doorway, headphones-adjusting pose, guitar on a doorframe, or poster bookshelf UNLESS the scene beat is that studio moment.\n\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\nSECTION B \u2014 CHARACTER + REFERENCE\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n- A reference image may be attached. Match Kai's face/hair identity and art style from it.\n- Do NOT copy the reference composition, doorway, pose, wardrobe, or background.\n- Invent a NEW pose that fits the current place and action.\n- Wardrobe may change to fit the scene; face identity stays.\n- User has no reference photo \u2014 if shown, infer lightly from text and keep secondary.\n- Prefer clear storytelling body language over glamorous poster posing.\n\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\nSECTION C \u2014 HARD FAILURES (AUTOMATIC REJECT)\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n- Output looks like character poster / key art.\n- Doorway-portal composition looking into another world.\n- Beach/ocean/tropical default when the beat names another place.\n- Tiny environment strip behind a huge portrait.\n- Ignoring SCENE TO DRAW NOW location or atmosphere.\n\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\nSECTION D \u2014 HOW TO THINK WHILE DRAWING\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\nStep 1: Quote the location from SCENE TO DRAW NOW.\nStep 2: Block in architecture and major props for that location across the full canvas.\nStep 3: Place lighting consistent with the stated time/mood.\nStep 4: Place Kai into that world with a new pose.\nStep 5: Audit against Section C. If any failure triggers, redesign.\n\nKeep the illustration literary romance only \u2014 no explicit sexual content. Soft intimacy and atmosphere are fine.\n\nREMINDER: SCENE TO DRAW NOW wins every conflict. Decorations first. New composition. No poster reprint. No beach unless the scene beat says beach.\n\nPOSE / ACTION HINTS (must not override LOCATION TO DRAW or GENDER):\nPost: my dad taught me that silence keeps you alive, but I realized I'm starving for a conversation. here, with this cat and the dying sun. does anyone else feel like the ocean is just loud when they aren't talking to a human?\nLocation: beachside tent in a hidden cove at sunset\nGender: woman\n\nFINAL AUDIT:\n- The environment must clearly read as: beachside tent in a hidden cove at sunset\n- Kai must clearly read as a woman.\n- If the draft still shows the reference workshop/studio/indoor set, discard and redraw LOCATION TO DRAW.\n- Face from reference. World from location + post. Gender from the gender lock. Always.",
+      "vae": [
+        "3",
+        0
+      ],
+      "image1": [
+        "4",
+        0
+      ]
+    }
+  },
+  "6": {
+    "class_type": "TextEncodeQwenImageEditPlus",
+    "inputs": {
+      "clip": [
+        "2",
+        0
+      ],
+      "prompt": "",
+      "vae": [
+        "3",
+        0
+      ],
+      "image1": [
+        "4",
+        0
+      ]
+    }
+  },
+  "7": {
+    "class_type": "VAEEncode",
+    "inputs": {
+      "pixels": [
+        "14",
+        0
+      ],
+      "vae": [
+        "3",
+        0
+      ]
+    }
+  },
+  "9": {
+    "class_type": "KSampler",
+    "inputs": {
+      "seed": 604731,
+      "steps": 4,
+      "cfg": 1.0,
+      "sampler_name": "euler",
+      "scheduler": "simple",
+      "denoise": 1.0,
+      "model": [
+        "13",
+        0
+      ],
+      "positive": [
+        "5",
+        0
+      ],
+      "negative": [
+        "6",
+        0
+      ],
+      "latent_image": [
+        "7",
+        0
+      ]
+    }
+  },
+  "10": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "9",
+        0
+      ],
+      "vae": [
+        "3",
+        0
+      ]
+    }
+  },
+  "11": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "filename_prefix": "qwen_edit_tent_cove",
+      "images": [
+        "10",
+        0
+      ]
+    }
+  }
+}

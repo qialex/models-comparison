@@ -488,6 +488,40 @@ services:
       start_period: 360s
     restart: unless-stopped
 
+  # Qwen3.8-27B Unsloth UD-IQ1_S (~6.2 GB) — stock llama.cpp CUDA. Exclusive GPU on 12GB.
+  qwen38_27b_iq1s_gpu:
+    build:
+      context: .
+      dockerfile: Dockerfile.cuda
+    container_name: qwen3.8-27b-iq1s-gpu
+    ports:
+      - "8134:8134"
+    environment:
+      PORT: "8134"
+      MODEL_FILE: Qwen3.8-27B-UD-IQ1_S.gguf
+      MODEL_URL: https://huggingface.co/unsloth/Qwen3.8-27B-GGUF/resolve/main/Qwen3.8-27B-UD-IQ1_S.gguf
+      N_CTX: "8192"
+      N_THREADS: ${N_THREADS:-4}
+      N_PREDICT: "1536"
+      N_PARALLEL: ${N_PARALLEL:-1}
+      N_GPU_LAYERS: ${N_GPU_LAYERS:-99}
+      FLASH_ATTN: "on"
+      REASONING: "off"
+      REASONING_BUDGET: "0"
+      NO_MMPROJ: "1"
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - models:/models
+    gpus: all
+    profiles: ["gpu"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8134/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 12
+      start_period: 900s
+    restart: unless-stopped
+
   phi4_mini_gpu:
     build:
       context: .
@@ -574,6 +608,40 @@ services:
       timeout: 5s
       retries: 3
       start_period: 120s
+    restart: unless-stopped
+
+  # MiniCPM5-2B official GGUF — stock llama.cpp CUDA. Exclusive GPU on 12GB.
+  minicpm5_2b_gpu:
+    build:
+      context: .
+      dockerfile: Dockerfile.cuda
+    container_name: minicpm5-2b-gpu
+    ports:
+      - "8135:8135"
+    environment:
+      PORT: "8135"
+      MODEL_FILE: MiniCPM5-2B-Q4_K_M.gguf
+      MODEL_URL: https://huggingface.co/openbmb/MiniCPM5-2B-GGUF/resolve/main/MiniCPM5-2B-Q4_K_M.gguf
+      N_CTX: "8192"
+      N_THREADS: ${N_THREADS:-4}
+      N_PREDICT: ${N_PREDICT:-1536}
+      N_PARALLEL: ${N_PARALLEL:-1}
+      N_GPU_LAYERS: ${N_GPU_LAYERS:-99}
+      FLASH_ATTN: "on"
+      # Hybrid think/no-think; force off for benches
+      REASONING: "off"
+      REASONING_BUDGET: "0"
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - models:/models
+    gpus: all
+    profiles: ["gpu"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8135/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 12
+      start_period: 300s
     restart: unless-stopped
 
   gemma3:
@@ -899,6 +967,39 @@ services:
       timeout: 10s
       retries: 8
       start_period: 180s
+    restart: unless-stopped
+
+  # Ternary-Bonsai-2-27B — Prism llama.cpp (PTQ1_0). Needs exclusive GPU on 12 GB.
+  ternary_bonsai2_27b_gpu:
+    build:
+      context: .
+      dockerfile: Dockerfile.prism-cuda
+    container_name: ternary-bonsai2-27b-gpu
+    ports:
+      - "8133:8133"
+    environment:
+      PORT: "8133"
+      MODEL_FILE: Ternary-Bonsai-2-27B-PTQ1_0.gguf
+      MODEL_URL: https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf/resolve/main/Ternary-Bonsai-2-27B-PTQ1_0.gguf
+      N_CTX: "8192"
+      N_THREADS: ${N_THREADS:-4}
+      N_PREDICT: "1536"
+      N_PARALLEL: ${N_PARALLEL:-1}
+      N_GPU_LAYERS: ${N_GPU_LAYERS:-99}
+      FLASH_ATTN: "on"
+      REASONING: "off"
+      REASONING_BUDGET: "0"
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - models:/models
+    gpus: all
+    profiles: ["gpu"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8133/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 12
+      start_period: 900s
     restart: unless-stopped
 
   tinyllama:
@@ -1566,6 +1667,29 @@ services:
     profiles: ["gpu"]
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8189/system_stats"]
+      interval: 15s
+      timeout: 10s
+      retries: 30
+      start_period: 300s
+    restart: unless-stopped
+
+  # ComfyUI: Qwen-Image-Edit (Comfy-Org int8/fp8) + FP8 TE + VAE. Port 8190.
+  # ~30GB weights on disk; --lowvram offloads between steps for ~12GB cards.
+  qwen_image_edit_comfy_gpu:
+    build: ./qwen-image-edit-comfy
+    container_name: qwen-image-edit-comfy-gpu
+    ports:
+      - "8190:8190"
+    volumes:
+      - ./cache/qwen-image-edit-comfy/split_files/diffusion_models:/app/ComfyUI/models/diffusion_models:ro
+      - ./cache/qwen-image-edit-comfy/split_files/text_encoders:/app/ComfyUI/models/text_encoders:ro
+      - ./cache/qwen-image-edit-comfy/split_files/vae:/app/ComfyUI/models/vae:ro
+      - ./cache/qwen-image-edit-comfy/split_files/loras:/app/ComfyUI/models/loras:ro
+      - ./cache/qwen-image-edit-comfy/output:/app/ComfyUI/output
+    gpus: all
+    profiles: ["gpu"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8190/system_stats"]
       interval: 15s
       timeout: 10s
       retries: 30

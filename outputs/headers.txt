@@ -1,0 +1,7 @@
+HTTP/1.1 200 OK
+date: Thu, 24 Sep 2026 23:21:21 GMT
+server: uvicorn
+x-latency-seconds: 12.038
+content-length: 426389
+content-type: image/png
+
