@@ -553,6 +553,39 @@ services:
       start_period: 300s
     restart: unless-stopped
 
+  # inclusionAI Ling-3.0-tiny — hybrid MoE 7.9B total / 1.3B active (bailingmoe3; needs recent llama.cpp).
+  ling30_tiny_gpu:
+    build:
+      context: .
+      dockerfile: Dockerfile.cuda
+    container_name: ling-3.0-tiny-gpu
+    ports:
+      - "8136:8136"
+    environment:
+      PORT: "8136"
+      MODEL_FILE: Ling-3.0-tiny-Q4_K_M.gguf
+      MODEL_URL: https://huggingface.co/bartowski/Ling-3.0-tiny-GGUF/resolve/main/Ling-3.0-tiny-Q4_K_M.gguf
+      N_CTX: ${N_CTX:-8192}
+      N_THREADS: ${N_THREADS:-4}
+      N_PREDICT: ${N_PREDICT:-512}
+      N_PARALLEL: ${N_PARALLEL:-1}
+      N_GPU_LAYERS: ${N_GPU_LAYERS:-99}
+      FLASH_ATTN: "on"
+      REASONING: "auto"
+      REASONING_BUDGET: ${REASONING_BUDGET:--1}
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - models:/models
+    gpus: all
+    profiles: ["gpu"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8136/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 8
+      start_period: 600s
+    restart: unless-stopped
+
   ministral3:
     build: .
     container_name: ministral-3-3b
@@ -1690,6 +1723,30 @@ services:
     profiles: ["gpu"]
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8190/system_stats"]
+      interval: 15s
+      timeout: 10s
+      retries: 30
+      start_period: 300s
+    restart: unless-stopped
+
+  # ComfyUI: Qwen-Image-2.1 int8 DiT + Qwen3-VL TE + VAE. Port 8191.
+  # ~17GB weights; --novram for ~12GB cards. Needs TextEncodeQwenImage21 (recent ComfyUI).
+  # Edit uploads: host script qwen-image-2.1-comfy/api.py writes to ./cache/.../input (mounted).
+  qwen_image_21_comfy_gpu:
+    build: ./qwen-image-2.1-comfy
+    container_name: qwen-image-2.1-comfy-gpu
+    ports:
+      - "8191:8191"
+    volumes:
+      - ./cache/qwen-image-2.1-comfy/diffusion_models:/app/ComfyUI/models/diffusion_models:ro
+      - ./cache/qwen-image-2.1-comfy/text_encoders:/app/ComfyUI/models/text_encoders:ro
+      - ./cache/qwen-image-2.1-comfy/vae:/app/ComfyUI/models/vae:ro
+      - ./cache/qwen-image-2.1-comfy/output:/app/ComfyUI/output
+      - ./cache/qwen-image-2.1-comfy/input:/app/ComfyUI/input
+    gpus: all
+    profiles: ["gpu"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8191/system_stats"]
       interval: 15s
       timeout: 10s
       retries: 30

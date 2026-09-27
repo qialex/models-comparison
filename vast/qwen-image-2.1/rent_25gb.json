@@ -1,0 +1,16 @@
+[
+  {
+    "instance": 52855233,
+    "offer": 50846025,
+    "geo": "Ohio, US",
+    "price": 0.06672222222222224,
+    "disk": 25
+  },
+  {
+    "instance": 52855246,
+    "offer": 43680162,
+    "geo": "South Korea, KR",
+    "price": 0.06805555555555555,
+    "disk": 25
+  }
+]
