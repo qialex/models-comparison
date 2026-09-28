@@ -56,6 +56,12 @@ OpenAI-compatible APIs via **llama.cpp** GGUF (CPU by default; GPU services use 
 | `bonsai27` | [Bonsai-27B](https://huggingface.co/prism-ml/Bonsai-27B-gguf) (profile `bonsai27`, no mmproj) | **8090** | Q1_0 (~3.5–3.9GB) | **8g** |
 | `bonsai27_gpu` | [Bonsai-27B](https://huggingface.co/prism-ml/Bonsai-27B-gguf) (CUDA, profile `gpu`, no mmproj) | **8101** | Q1_0 (~3.5–3.9GB) | GPU VRAM (~5 GB at 2K ctx) |
 | `bonsai27_spec_gpu` | [Bonsai-27B](https://huggingface.co/prism-ml/Bonsai-27B-gguf) + DSpark drafter (Prism CUDA, profile `gpu`) | **8108** | Q1_0 + dspark Q4_1 (~3.8+1.79GB) | GPU VRAM |
+| `qwen3_tts_17b_customvoice_cpu` | [Qwen3-TTS-12Hz-1.7B-CustomVoice](https://huggingface.co/Qwen/Qwen3-TTS-12Hz-1.7B-CustomVoice) TTS, 9 preset speakers (profile `cpu`/`tts`) | **8194** | BF16→FP32 (~4.5GB) | 4g |
+| `qwen3_tts_17b_customvoice_gpu` | [Qwen3-TTS-12Hz-1.7B-CustomVoice](https://huggingface.co/Qwen/Qwen3-TTS-12Hz-1.7B-CustomVoice) (CUDA, profile `gpu`/`tts`) | **8195** | BF16 (~4.5GB) | GPU VRAM (~4–6GB) |
+| `qwen3_tts_06b_customvoice_cpu` | [Qwen3-TTS-12Hz-0.6B-CustomVoice](https://huggingface.co/Qwen/Qwen3-TTS-12Hz-0.6B-CustomVoice) — smaller/faster sibling (profile `cpu`/`tts`) | **8196** | BF16→FP32 | 3g |
+| `qwen3_tts_06b_customvoice_gpu` | [Qwen3-TTS-12Hz-0.6B-CustomVoice](https://huggingface.co/Qwen/Qwen3-TTS-12Hz-0.6B-CustomVoice) (CUDA, profile `gpu`/`tts`) | **8197** | BF16 | GPU VRAM (~2–3GB) |
+| `omnivoice_cpu` | [OmniVoice](https://huggingface.co/k2-fsa/OmniVoice) (k2-fsa) zero-shot voice cloning, 600+ languages — **weights CC-BY-NC** (profile `cpu`/`tts`) | **8198** | FP16→FP32 | 4g |
+| `omnivoice_gpu` | [OmniVoice](https://huggingface.co/k2-fsa/OmniVoice) (CUDA, profile `gpu`/`tts`) | **8199** | FP16 | GPU VRAM (~2–5GB) |
 
 ## Prerequisites
 
@@ -92,6 +98,9 @@ docker compose up -d go_emotions
 docker compose up -d bert_emotion
 docker compose up -d emobank_vad
 docker compose up -d vad_bert
+docker compose --profile tts up -d --build qwen3_tts_17b_customvoice_gpu   # or _cpu
+docker compose --profile tts up -d --build qwen3_tts_06b_customvoice_gpu   # or _cpu (smaller/faster)
+docker compose --profile tts up -d --build omnivoice_gpu                   # or _cpu; CC-BY-NC weights, zero-shot voice cloning
 # optional CPU 27B: docker compose --profile bonsai27 up -d bonsai27
 ```
 

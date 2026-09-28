@@ -1804,6 +1804,160 @@ services:
       start_period: 300s
     restart: unless-stopped
 
+  # Qwen3-TTS-12Hz-1.7B-CustomVoice — CPU (no GPU). Port 8194.
+  qwen3_tts_17b_customvoice_cpu:
+    build: ./qwen3-tts-1.7b-customvoice
+    container_name: qwen3-tts-1.7b-customvoice-cpu
+    ports:
+      - "8194:8194"
+    environment:
+      PORT: "8194"
+      MODEL_ID: Qwen/Qwen3-TTS-12Hz-1.7B-CustomVoice
+      DEVICE: cpu
+      DEFAULT_LANGUAGE: English
+      DEFAULT_SPEAKER: Ryan
+      ATTN_IMPL: sdpa
+      HF_HOME: /cache/huggingface
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - qwen3-tts-1.7b-customvoice-cache:/cache/huggingface
+    profiles: ["cpu", "tts"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8194/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 40
+      start_period: 600s
+    restart: unless-stopped
+
+  # Qwen3-TTS-12Hz-1.7B-CustomVoice — GPU. Port 8195.
+  qwen3_tts_17b_customvoice_gpu:
+    build: ./qwen3-tts-1.7b-customvoice
+    container_name: qwen3-tts-1.7b-customvoice-gpu
+    ports:
+      - "8195:8195"
+    environment:
+      PORT: "8195"
+      MODEL_ID: Qwen/Qwen3-TTS-12Hz-1.7B-CustomVoice
+      DEVICE: cuda
+      DEFAULT_LANGUAGE: English
+      DEFAULT_SPEAKER: Ryan
+      ATTN_IMPL: sdpa
+      HF_HOME: /cache/huggingface
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - qwen3-tts-1.7b-customvoice-cache:/cache/huggingface
+    gpus: all
+    profiles: ["gpu", "tts"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8195/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 40
+      start_period: 600s
+    restart: unless-stopped
+
+  # Qwen3-TTS-12Hz-0.6B-CustomVoice — CPU (no GPU). Port 8196.
+  qwen3_tts_06b_customvoice_cpu:
+    build: ./qwen3-tts-0.6b-customvoice
+    container_name: qwen3-tts-0.6b-customvoice-cpu
+    ports:
+      - "8196:8196"
+    environment:
+      PORT: "8196"
+      MODEL_ID: Qwen/Qwen3-TTS-12Hz-0.6B-CustomVoice
+      DEVICE: cpu
+      DEFAULT_LANGUAGE: English
+      DEFAULT_SPEAKER: Ryan
+      ATTN_IMPL: sdpa
+      HF_HOME: /cache/huggingface
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - qwen3-tts-0.6b-customvoice-cache:/cache/huggingface
+    profiles: ["cpu", "tts"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8196/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 40
+      start_period: 600s
+    restart: unless-stopped
+
+  # Qwen3-TTS-12Hz-0.6B-CustomVoice — GPU. Port 8197.
+  qwen3_tts_06b_customvoice_gpu:
+    build: ./qwen3-tts-0.6b-customvoice
+    container_name: qwen3-tts-0.6b-customvoice-gpu
+    ports:
+      - "8197:8197"
+    environment:
+      PORT: "8197"
+      MODEL_ID: Qwen/Qwen3-TTS-12Hz-0.6B-CustomVoice
+      DEVICE: cuda
+      DEFAULT_LANGUAGE: English
+      DEFAULT_SPEAKER: Ryan
+      ATTN_IMPL: sdpa
+      HF_HOME: /cache/huggingface
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - qwen3-tts-0.6b-customvoice-cache:/cache/huggingface
+    gpus: all
+    profiles: ["gpu", "tts"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8197/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 40
+      start_period: 600s
+    restart: unless-stopped
+
+  # OmniVoice (k2-fsa) — zero-shot voice cloning, 600+ languages. CC-BY-NC weights.
+  # CPU (no GPU). Port 8198.
+  omnivoice_cpu:
+    build: ./omnivoice
+    container_name: omnivoice-cpu
+    ports:
+      - "8198:8198"
+    environment:
+      PORT: "8198"
+      MODEL_ID: k2-fsa/OmniVoice
+      DEVICE: cpu
+      HF_HOME: /cache/huggingface
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - omnivoice-cache:/cache/huggingface
+    profiles: ["cpu", "tts"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8198/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 40
+      start_period: 600s
+    restart: unless-stopped
+
+  # OmniVoice (k2-fsa) — GPU. Port 8199.
+  omnivoice_gpu:
+    build: ./omnivoice
+    container_name: omnivoice-gpu
+    ports:
+      - "8199:8199"
+    environment:
+      PORT: "8199"
+      MODEL_ID: k2-fsa/OmniVoice
+      DEVICE: cuda
+      HF_HOME: /cache/huggingface
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      - omnivoice-cache:/cache/huggingface
+    gpus: all
+    profiles: ["gpu", "tts"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8199/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 40
+      start_period: 600s
+    restart: unless-stopped
+
 volumes:
   models:
   go-emotions-cache:
@@ -1822,3 +1976,6 @@ volumes:
   sdxl-turbo-cache:
   z-image-turbo-cache:
   kokoro-82m-cache:
+  qwen3-tts-1.7b-customvoice-cache:
+  qwen3-tts-0.6b-customvoice-cache:
+  omnivoice-cache:
