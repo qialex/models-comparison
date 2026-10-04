@@ -8,11 +8,13 @@ Auth stays on the machine (`vastai` CLI + `~/.config/vastai/vast_api_key`) — *
 | Path | Purpose |
 | --- | --- |
 | `kokoro/hunt_miracle.py` | Auto-rent Kokoro: static IP, reli>0.9, score/price bands |
+| `kokoro/rent_bw100.py` | Rent cheapest: static IP, <$0.035, `(bw*frac)>100`; destroy if direct `/health` dead |
 | `kokoro/search100_collect.py` | Market snapshots (no rent) |
 | `kokoro/rank_score.py` | Rank collected offers by BW×frac / ¢ |
 | `flux_int8/hunt_*.py`, `rent_*.py` | Flux INT8 template hunts |
 | `flux_int8/search10_*.py`, `montecarlo_vast.py` | Search-only market analysis |
 | `qwen_mtp/*` | Qwen3.5-4B MTP ngram offer pick / rent |
+| `qwen_mtp/rent_bw300.py` | Rent: static IP, <$0.05, `(bw*frac)>300`, disk 8 |
 | `_paths.py` | Repo root + `cache/` output dirs; redacts `instance_api_key` |
 
 ## Outputs
